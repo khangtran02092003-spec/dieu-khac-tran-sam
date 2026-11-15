@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import Picture from '../components/Picture.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { categories } from '../data/categories';
+const works = await getCollection('tac-pham');
+---
+<Base title="Dịch vụ" description="Mười dòng dịch vụ điêu khắc và tạo hình của xưởng Trần Sâm: phù điêu, tượng Phật giáo, bảo tàng, chân dung, tượng cổ điển, mô hình quảng cáo, xuyên sáng, nội thất composite, quân cờ, mặt nạ.">
+  <PageHead title="Dịch vụ của xưởng" lede="Mười dòng việc, cùng một xưởng và một đội nghệ nhân. Mỗi dòng dưới đây có trang riêng với tác phẩm đã làm và câu hỏi thường gặp." crumbs={[{ href: '/dich-vu/', label: 'Dịch vụ' }]} />
+  <div class="wrap list">
+    {categories.map((c, i) => (
+      <section class:list={['svc', { flip: i % 2 === 1 }]} aria-labelledby={`s-${c.slug}`}>
+        <a class="img" href={`/tac-pham/${c.slug}/`} tabindex="-1" aria-hidden="true">
+          <Picture src={c.cover} alt="" ratio="4 / 3" sizes="(max-width: 860px) 100vw, 45vw" />
+        </a>
+        <div class="txt">
+          <h2 id={`s-${c.slug}`}><a href={`/tac-pham/${c.slug}/`}>{c.name}</a></h2>
+          <p class="short">{c.short}</p>
+          <p>{c.intro[0]}</p>
+          <p class="meta">{works.filter((w) => w.data.category === c.slug).length} tác phẩm đã làm. Thường dùng cho {c.fits.slice(0, 3).join(', ').toLowerCase()}.</p>
+          <div class="btns">
+            <a class="btn btn-ghost" href={`/tac-pham/${c.slug}/`}>Xem tác phẩm</a>
+            <a class="btn btn-primary" href={`/lien-he/?loai=${c.slug}`}>Hỏi giá</a>
+          </div>
+        </div>
+      </section>
+    ))}
+  </div>
+  <CtaBand />
+</Base>
+<style>
+  .list { padding-bottom: var(--section); }
+  .svc { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 2rem clamp(2rem, 1rem + 4vw, 5rem); align-items: center; padding-block: clamp(2.5rem, 2rem + 2vw, 4rem); border-top: 1px solid var(--rule); }
+  .flip .img { order: 2; }
+  h2 { font-size: var(--step-4); }
+  h2 a { text-decoration: none; }
+  h2 a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
+  .short { font-size: var(--step-1); margin: 1rem 0; }
+  .txt p:not(.short) { color: var(--fg-soft); }
+  .meta { font-size: var(--step--1); }
+  .btns { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+  @media (max-width: 860px) { .svc { grid-template-columns: 1fr; } .flip .img { order: 0; } }
+</style>

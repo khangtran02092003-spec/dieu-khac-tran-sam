@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import QuoteForm from '../components/QuoteForm.astro';
+import Icon from '../components/Icon.astro';
+import site from '../data/site.json';
+const zalo = site.zalo ? `https://zalo.me/${site.zalo.replace(/\D/g, '')}` : '';
+const filled = (s: string) => s && !s.startsWith('[');
+---
+<Base title="Liên hệ và báo giá" description="Gửi ý tưởng, ảnh không gian và kích thước để nhận phác thảo và báo giá phù điêu, tượng, mô hình từ xưởng Điêu khắc Trần Sâm.">
+  <PageHead title="Nhận phác thảo và báo giá" lede="Điền những gì bạn biết, phần còn lại xưởng sẽ hỏi khi gọi lại. Không mất phí tư vấn và phác thảo ban đầu." crumbs={[{ href: '/lien-he/', label: 'Liên hệ' }]} />
+  <section class="wrap grid12 body">
+    <div class="form"><QuoteForm /></div>
+    <aside class="side">
+      <h2>Liên hệ trực tiếp</h2>
+      <ul class="ways">
+        <li><Icon name="phone" /><div><span class="k">Điện thoại</span>{site.phoneHref ? <a href={`tel:${site.phoneHref}`}>{site.phone}</a> : <span>{site.phone}</span>}</div></li>
+        {zalo && <li><Icon name="chat" /><div><span class="k">Zalo</span><a href={zalo} target="_blank" rel="noopener">Nhắn tin cho xưởng</a></div></li>}
+        <li><Icon name="mail" /><div><span class="k">Email</span>{filled(site.email) ? <a href={`mailto:${site.email}`}>{site.email}</a> : <span>{site.email}</span>}</div></li>
+        <li><Icon name="pin" /><div><span class="k">Xưởng</span><span>{site.address}</span></div></li>
+        <li><Icon name="clock" /><div><span class="k">Giờ làm việc</span><span>{site.hours}</span></div></li>
+      </ul>
+      <p class="visit">Muốn xem mẫu tận nơi? Hẹn trước để nghệ nhân có mặt và chuẩn bị đèn soi mẫu cho bạn.</p>
+      {site.mapEmbed && <iframe class="map" src={site.mapEmbed} title="Bản đồ đường đến xưởng" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>}
+    </aside>
+  </section>
+</Base>
+<style>
+  .body { padding-bottom: var(--section); row-gap: 3rem; }
+  .form { grid-column: 1 / span 7; }
+  .side { grid-column: 9 / span 4; }
+  .side h2 { font-size: var(--step-3); margin-bottom: 1.5rem; }
+  .ways { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+  .ways li { display: flex; gap: 0.9rem; padding: 1rem 0; border-bottom: 1px solid var(--rule); }
+  .ways :global(.icon) { color: var(--jade-600); margin-top: 0.15rem; }
+  .ways div { display: flex; flex-direction: column; }
+  .k { font-size: var(--step--1); color: var(--fg-soft); }
+  .visit { margin-top: 1.5rem; color: var(--fg-soft); }
+  .map { width: 100%; aspect-ratio: 4 / 3; border: 0; margin-top: 1rem; }
+  @media (max-width: 900px) { .form, .side { grid-column: 1 / -1; } }
+</style>

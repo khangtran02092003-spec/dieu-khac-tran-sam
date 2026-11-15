@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import Picture from '../components/Picture.astro';
+---
+<Base title="Không tìm thấy trang" noindex>
+  <section class="wrap nf">
+    <div>
+      <h1>Trang này chưa được nặn</h1>
+      <p class="lede">Đường dẫn có thể đã đổi hoặc gõ sai. Thử bắt đầu từ danh sách tác phẩm.</p>
+      <div class="btns">
+        <a class="btn btn-primary" href="/tac-pham/">Xem tác phẩm</a>
+        <a class="btn btn-ghost" href="/">Về trang chủ</a>
+      </div>
+    </div>
+    <Picture src="phu-dieu-decor-19" alt="Phù điêu tròn bằng composite trắng" ratio="1 / 1" sizes="40vw" />
+  </section>
+</Base>
+<style>
+  .nf { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3rem var(--gutter); align-items: center; padding-block: clamp(4rem, 3rem + 5vw, 8rem); }
+  h1 { font-size: var(--step-4); margin-bottom: 1.5rem; }
+  .btns { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
+  @media (max-width: 760px) { .nf { grid-template-columns: 1fr; } }
+</style>

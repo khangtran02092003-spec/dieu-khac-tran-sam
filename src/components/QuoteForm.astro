@@ -1,0 +1,204 @@
+---
+import { categories } from '../data/categories';
+import Icon from './Icon.astro';
+interface Props { compact?: boolean; preset?: string }
+const { compact = false, preset } = Astro.props;
+const formName = compact ? 'bao-gia-nhanh' : 'bao-gia';
+const id = (s: string) => `${formName}-${s}`;
+const kinds = [...categories.map((c) => ({ v: c.slug, l: c.name })), { v: 'khac', l: 'Việc khác' }];
+---
+<form
+  class:list={['qf', { compact }]}
+  name={formName}
+  method="POST"
+  action="/cam-on/"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+  enctype={compact ? undefined : 'multipart/form-data'}
+  novalidate
+  data-quote-form
+>
+  <input type="hidden" name="form-name" value={formName} />
+  <p class="sr-only"><label>Bỏ trống ô này <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+
+  {!compact && (
+    <fieldset class="kinds">
+      <legend>Bạn cần làm gì?</legend>
+      <div class="chips">
+        {kinds.map((k) => (
+          <label class="chip">
+            <input type="checkbox" name="loai" value={k.l} checked={preset === k.v} data-slug={k.v} />
+            <span>{k.l}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  )}
+
+  {compact && (
+    <div class="field full">
+      <label for={id('loai')}>Bạn cần làm gì?</label>
+      <select id={id('loai')} name="loai">
+        <option value="">Chọn dòng tác phẩm</option>
+        {kinds.map((k) => <option value={k.l}>{k.l}</option>)}
+      </select>
+    </div>
+  )}
+
+  {!compact && (
+    <>
+      <div class="field">
+        <label for={id('kich-thuoc')}>Kích thước dự kiến</label>
+        <input id={id('kich-thuoc')} name="kich-thuoc" placeholder="Ví dụ: 3 × 1,5 m" />
+        <small>Chưa đo được thì ghi ước lượng.</small>
+      </div>
+      <div class="field">
+        <label for={id('chat-lieu')}>Chất liệu mong muốn</label>
+        <select id={id('chat-lieu')} name="chat-lieu">
+          <option>Chưa rõ, nhờ xưởng tư vấn</option>
+          <option>Composite</option>
+          <option>Xi măng đắp tại chỗ</option>
+          <option>Sơn giả đồng</option>
+          <option>Sơn giả đá</option>
+          <option>Nhũ vàng</option>
+          <option>Composite xuyên sáng</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for={id('noi-dat')}>Nơi đặt tác phẩm</label>
+        <input id={id('noi-dat')} name="noi-dat" placeholder="Tỉnh/thành, trong nhà hay ngoài trời" />
+      </div>
+      <div class="field">
+        <label for={id('ngan-sach')}>Ngân sách dự kiến</label>
+        <select id={id('ngan-sach')} name="ngan-sach">
+          <option>Chưa xác định</option>
+          <option>Dưới 20 triệu</option>
+          <option>20 – 50 triệu</option>
+          <option>50 – 150 triệu</option>
+          <option>150 – 500 triệu</option>
+          <option>Trên 500 triệu</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for={id('thoi-han')}>Cần xong trước ngày</label>
+        <input id={id('thoi-han')} name="thoi-han" placeholder="Ví dụ: trước Tết, 15/3" />
+      </div>
+      <div class="field">
+        <label for={id('anh')}>Ảnh mặt bằng hoặc ảnh mẫu</label>
+        <label class="file" for={id('anh')}>
+          <Icon name="upload" /><span data-file-label>Chọn ảnh (tối đa 8 MB)</span>
+        </label>
+        <input id={id('anh')} class="sr-only" type="file" name="anh" accept="image/*,.pdf" data-file />
+        <small class="err" data-err-for="anh" hidden></small>
+      </div>
+    </>
+  )}
+
+  <div class="field full">
+    <label for={id('mo-ta')}>{compact ? 'Mô tả ngắn' : 'Kể cho xưởng nghe ý tưởng của bạn'}</label>
+    <textarea id={id('mo-ta')} name="mo-ta" rows={compact ? 3 : 5} placeholder={compact ? 'Đặt ở đâu, kích thước khoảng bao nhiêu' : 'Đề tài, phong cách, màu sắc, khoảng cách người xem, những điều bạn thích hoặc không thích ở ảnh mẫu'}></textarea>
+  </div>
+
+  <div class="field">
+    <label for={id('ten')}>Họ tên <span class="req">(bắt buộc)</span></label>
+    <input id={id('ten')} name="ten" autocomplete="name" required aria-describedby={id('ten-err')} />
+    <small class="err" id={id('ten-err')} hidden>Nhập tên để xưởng biết cách xưng hô.</small>
+  </div>
+  <div class="field">
+    <label for={id('sdt')}>Số điện thoại hoặc Zalo <span class="req">(bắt buộc)</span></label>
+    <input id={id('sdt')} name="sdt" type="tel" inputmode="tel" autocomplete="tel" required data-phone aria-describedby={id('sdt-err')} />
+    <small class="err" id={id('sdt-err')} hidden>Số điện thoại cần 9–15 chữ số, ví dụ 0912 345 678.</small>
+  </div>
+  {!compact && (
+    <div class="field">
+      <label for={id('email')}>Email <span class="opt">(không bắt buộc)</span></label>
+      <input id={id('email')} name="email" type="email" autocomplete="email" aria-describedby={id('email-err')} />
+      <small class="err" id={id('email-err')} hidden>Email chưa đúng định dạng, ví dụ ten@gmail.com.</small>
+    </div>
+  )}
+
+  <div class="submit full">
+    <button class="btn btn-primary" type="submit" data-submit>Gửi yêu cầu báo giá</button>
+    <p class="note">Xưởng gọi lại trong giờ làm việc. Thông tin chỉ dùng để báo giá cho bạn.</p>
+  </div>
+</form>
+
+<style>
+  .qf { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 1.5rem; }
+  .full, .kinds { grid-column: 1 / -1; }
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  legend, label:not(.chip):not(.file) { display: block; font-weight: 500; font-size: 0.95rem; margin-bottom: 0.5rem; }
+  .req, .opt { font-weight: 400; color: var(--fg-soft); font-size: 0.85rem; }
+  input:not([type='checkbox']):not([type='file']), select, textarea {
+    width: 100%; min-height: 3rem; padding: 0.75rem 0.9rem; background: var(--plaster); border: 1px solid #b9b09c; border-radius: 0; font-size: 1rem; transition: border-color 150ms;
+  }
+  textarea { resize: vertical; min-height: 6rem; }
+  input:hover, select:hover, textarea:hover { border-color: var(--ink-soft); }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 0; border-color: var(--focus); }
+  input[aria-invalid='true'] { border-color: #a3341f; }
+  small { display: block; margin-top: 0.4rem; font-size: 0.85rem; color: var(--fg-soft); }
+  .err { color: #a3341f; }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .chip { position: relative; cursor: pointer; }
+  .chip input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .chip span { display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0.5rem 1rem; border: 1px solid #b9b09c; background: var(--plaster); font-size: 0.95rem; transition: background-color 150ms, border-color 150ms, color 150ms; }
+  .chip:hover span { border-color: var(--ink); }
+  .chip input:checked + span { background: var(--moss-800); border-color: var(--moss-800); color: var(--plaster); }
+  .chip input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .file { display: flex; align-items: center; gap: 0.6rem; min-height: 3rem; padding: 0.75rem 0.9rem; border: 1px dashed #9f9682; background: var(--plaster); cursor: pointer; font-size: 0.95rem; }
+  .file:hover { border-color: var(--ink); }
+  .file :global(svg) { width: 1.2rem; height: 1.2rem; flex: none; }
+  .sr-only:focus-visible + * , input[type='file']:focus-visible ~ .file { outline: 2px solid var(--focus); }
+  .submit { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; margin-top: 0.5rem; }
+  .note { margin: 0; font-size: 0.9rem; color: var(--fg-soft); max-width: 36ch; }
+  button[disabled] { opacity: 0.7; cursor: progress; }
+  @media (max-width: 640px) { .qf { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  // Chọn sẵn dòng tác phẩm khi đến từ nút "Hỏi giá" (?loai=phu-dieu)
+  const presetSlug = new URLSearchParams(location.search).get('loai');
+  if (presetSlug) {
+    document.querySelectorAll<HTMLInputElement>(`[data-quote-form] input[data-slug="${CSS.escape(presetSlug)}"]`).forEach((c) => { c.checked = true; });
+  }
+
+  document.querySelectorAll<HTMLFormElement>('[data-quote-form]').forEach((form) => {
+    const show = (input: HTMLInputElement, bad: boolean) => {
+      const err = form.querySelector<HTMLElement>(`#${CSS.escape(input.getAttribute('aria-describedby') ?? '')}`);
+      input.setAttribute('aria-invalid', String(bad));
+      if (err) err.hidden = !bad;
+    };
+    const check = (input: HTMLInputElement) => {
+      if (!input.getAttribute('aria-describedby')) return true;
+      const v = input.value.trim();
+      // Số điện thoại: chỉ chữ số, dấu cách, chấm, gạch, ngoặc, dấu +; cần 9–15 chữ số
+      const phoneOk = !('phone' in input.dataset) || (/^[\d\s.()+-]+$/.test(v) && (v.match(/\d/g)?.length ?? 0) >= 9 && (v.match(/\d/g)?.length ?? 0) <= 15);
+      const ok = v === '' ? !input.required : input.checkValidity() && phoneOk;
+      show(input, !ok);
+      return ok;
+    };
+    form.querySelectorAll<HTMLInputElement>('input[aria-describedby]').forEach((i) => {
+      i.addEventListener('blur', () => { if (i.value || i.getAttribute('aria-invalid')) check(i); });
+      i.addEventListener('input', () => { if (i.getAttribute('aria-invalid') === 'true') check(i); });
+    });
+
+    const file = form.querySelector<HTMLInputElement>('[data-file]');
+    const fileLabel = form.querySelector<HTMLElement>('[data-file-label]');
+    const fileErr = form.querySelector<HTMLElement>('[data-err-for="anh"]');
+    file?.addEventListener('change', () => {
+      const f = file.files?.[0];
+      const tooBig = !!f && f.size > 8 * 1024 * 1024;
+      if (fileLabel) fileLabel.textContent = f ? f.name : 'Chọn ảnh (tối đa 8 MB)';
+      if (fileErr) { fileErr.hidden = !tooBig; fileErr.textContent = tooBig ? 'Ảnh lớn hơn 8 MB. Chọn ảnh nhỏ hơn hoặc gửi qua Zalo sau.' : ''; }
+      if (tooBig) file.value = '';
+    });
+
+    form.addEventListener('submit', (e) => {
+      const fields = [...form.querySelectorAll<HTMLInputElement>('input[aria-describedby]')];
+      const bad = fields.filter((i) => !check(i));
+      if (bad.length) { e.preventDefault(); bad[0].focus(); return; }
+      const btn = form.querySelector<HTMLButtonElement>('[data-submit]');
+      if (btn) { btn.disabled = true; btn.textContent = 'Đang gửi yêu cầu…'; }
+    });
+  });
+</script>

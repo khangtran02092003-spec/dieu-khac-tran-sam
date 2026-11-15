@@ -1,0 +1,63 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Picture from '../../components/Picture.astro';
+import NewsCard from '../../components/NewsCard.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import site from '../../data/site.json';
+import { imageUrl } from '../../lib/img';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('tin-tuc', ({ data }) => !data.draft)).sort((a, b) => +b.data.date - +a.data.date);
+  return posts.map((p) => ({ params: { slug: p.id }, props: { post: p, posts } }));
+}
+const { post, posts } = Astro.props as { post: any; posts: any[] };
+const d = post.data;
+const { Content } = await render(post);
+const more = posts.filter((p) => p.id !== post.id).slice(0, 3);
+const date = d.date.toLocaleDateString('vi-VN', { day: 'numeric', month: 'long', year: 'numeric' });
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: d.title,
+  datePublished: d.date.toISOString(),
+  image: new URL(imageUrl(d.cover, 1600), Astro.site).href,
+  publisher: { '@type': 'Organization', name: site.name },
+  description: d.excerpt,
+};
+---
+<Base title={d.title} description={d.excerpt} image={d.cover} jsonld={ld}>
+  <article class="post">
+    <header class="wrap head">
+      <nav aria-label="Đường dẫn" class="crumbs"><a href="/">Trang chủ</a> / <a href="/tin-tuc/">Tin tức</a></nav>
+      <p class="meta"><span>{d.topic}</span><time datetime={d.date.toISOString()}>{date}</time></p>
+      <h1>{d.title}</h1>
+      <p class="lede">{d.excerpt}</p>
+    </header>
+    <div class="wrap cover"><Picture src={d.cover} alt={d.coverAlt} sizes="(max-width: 1400px) 100vw, 1400px" loading="eager" fetchpriority="high" /></div>
+    <div class="wrap content"><div class="prose"><Content /></div></div>
+  </article>
+
+  {more.length > 0 && (
+    <section class="wrap more on-cream-strip" aria-labelledby="more-h">
+      <h2 id="more-h">Đọc tiếp</h2>
+      <ul>{more.map((p) => <li><NewsCard post={p} /></li>)}</ul>
+    </section>
+  )}
+  <CtaBand />
+</Base>
+<style>
+  .head { padding-block: clamp(3rem, 2rem + 4vw, 6rem) 2.5rem; max-width: 62rem; margin-inline: auto; }
+  .crumbs { font-size: var(--step--1); color: var(--fg-soft); margin-bottom: 2rem; }
+  .crumbs a { text-decoration: none; }
+  .crumbs a:hover { text-decoration: underline; }
+  .meta { display: flex; gap: 1.5rem; font-size: var(--step--1); color: var(--fg-soft); }
+  h1 { font-size: var(--step-4); margin: 0.75rem 0 1.5rem; }
+  .cover { max-width: 80rem; }
+  .content { max-width: 62rem; padding-block: clamp(2.5rem, 2rem + 3vw, 5rem); }
+  .content .prose { font-size: 1.1rem; }
+  .more { padding-block: var(--section); }
+  .more h2 { font-size: var(--step-3); margin-bottom: 2.5rem; }
+  .more ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); }
+  @media (max-width: 860px) { .more ul { grid-template-columns: 1fr; gap: 2.5rem; } }
+</style>

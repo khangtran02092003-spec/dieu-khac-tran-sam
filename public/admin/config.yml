@@ -1,0 +1,115 @@
+# Trang quản trị: https://<tên-miền>/admin/
+# Đăng nhập bằng tài khoản GitHub có quyền ghi vào repo bên dưới (xem README.md, mục "Trang quản trị").
+backend:
+  name: github
+  repo: khangtran02092003-spec/dieu-khac-tran-sam
+  branch: main
+  commit_messages:
+    create: 'Thêm {{collection}}: {{slug}}'
+    update: 'Sửa {{collection}}: {{slug}}'
+    delete: 'Xóa {{collection}}: {{slug}}'
+    uploadMedia: 'Tải ảnh {{path}}'
+    deleteMedia: 'Xóa ảnh {{path}}'
+
+# Chạy `npx decap-server` song song với `npm run dev` để sửa nội dung trên máy mà không cần đăng nhập.
+local_backend: true
+
+locale: vi
+site_url: https://dieukhactransam.vn
+display_url: https://dieukhactransam.vn
+logo_url: /favicon.svg
+
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  - name: tin-tuc
+    label: Tin tức
+    label_singular: Bài viết
+    folder: src/content/tin-tuc
+    create: true
+    slug: '{{slug}}'
+    sortable_fields: ['date', 'title']
+    summary: '{{title}} ({{date}})'
+    fields:
+      - { label: Tiêu đề, name: title, widget: string }
+      - { label: Ngày đăng, name: date, widget: datetime, date_format: 'DD/MM/YYYY', time_format: false, format: 'YYYY-MM-DD' }
+      - label: Chủ đề
+        name: topic
+        widget: select
+        options: ['Kiến thức chất liệu', 'Quy trình', 'Xu hướng', 'Bảo quản', 'Công trình', 'Tin xưởng']
+      - { label: Tóm tắt (hiện ở danh sách và Google), name: excerpt, widget: text, hint: 'Một đến hai câu, khoảng 150 ký tự.' }
+      - { label: Ảnh bìa, name: cover, widget: image, hint: 'Ảnh ngang, rộng tối thiểu 1600px.' }
+      - { label: Mô tả ảnh bìa, name: coverAlt, widget: string, required: false, hint: 'Tả ngắn nội dung ảnh, giúp người khiếm thị và Google hiểu ảnh.' }
+      - { label: Bản nháp (chưa đăng), name: draft, widget: boolean, default: false, required: false }
+      - { label: Nội dung, name: body, widget: markdown }
+
+  - name: tac-pham
+    label: Tác phẩm
+    label_singular: Tác phẩm
+    folder: src/content/tac-pham
+    create: true
+    slug: '{{slug}}'
+    sortable_fields: ['order', 'title', 'category']
+    summary: '{{title}}'
+    view_groups:
+      - { label: Dòng tác phẩm, field: category }
+    fields:
+      - { label: Tên tác phẩm, name: title, widget: string }
+      - label: Dòng tác phẩm
+        name: category
+        widget: select
+        options:
+          - { label: Phù điêu trang trí, value: phu-dieu }
+          - { label: Tượng & phù điêu Phật giáo, value: phat-giao }
+          - { label: Bảo tàng, tượng đài & huy hiệu, value: bao-tang }
+          - { label: Tượng chân dung, value: chan-dung }
+          - { label: Tượng cổ điển & thiên thần, value: co-dien }
+          - { label: Mô hình quảng cáo & linh vật, value: mo-hinh }
+          - { label: Mô hình xuyên sáng, value: xuyen-sang }
+          - { label: Nội thất & decor composite, value: noi-that }
+          - { label: Quân cờ khổng lồ, value: quan-co }
+          - { label: Mặt nạ & đạo cụ, value: mat-na }
+      - { label: Chất liệu, name: material, widget: string, required: false }
+      - { label: Kích thước, name: size, widget: string, required: false, hint: 'Ví dụ: 3 × 1,5 m' }
+      - { label: Công trình / địa điểm, name: location, widget: string, required: false }
+      - { label: Năm hoàn thành, name: year, widget: number, value_type: int, required: false }
+      - { label: Mô tả ngắn, name: summary, widget: text, required: false }
+      - label: Ảnh
+        name: images
+        widget: list
+        min: 1
+        hint: 'Ảnh đầu tiên là ảnh đại diện.'
+        field: { label: Ảnh, name: image, widget: image }
+      - { label: Video (mp4), name: video, widget: file, required: false }
+      - { label: Hiện ở trang chủ, name: featured, widget: boolean, default: false, required: false }
+      - { label: Thứ tự (số nhỏ đứng trước), name: order, widget: number, value_type: int, default: 100, required: false }
+      - { label: Câu chuyện tác phẩm, name: body, widget: markdown, required: false }
+
+  - name: cai-dat
+    label: Thông tin xưởng
+    files:
+      - name: site
+        label: Liên hệ và số liệu
+        file: src/data/site.json
+        fields:
+          - { label: Tên xưởng, name: name, widget: string }
+          - { label: Khẩu hiệu, name: tagline, widget: string }
+          - { label: Số điện thoại (hiển thị), name: phone, widget: string, hint: 'Ví dụ: 0912 345 678' }
+          - { label: Số điện thoại (để bấm gọi), name: phoneHref, widget: string, required: false, hint: 'Chỉ chữ số, ví dụ 0912345678. Để trống thì ẩn nút gọi.' }
+          - { label: Số Zalo, name: zalo, widget: string, required: false, hint: 'Để trống thì ẩn nút Zalo.' }
+          - { label: Email, name: email, widget: string }
+          - { label: Địa chỉ xưởng, name: address, widget: string }
+          - { label: Giờ làm việc, name: hours, widget: string }
+          - { label: Link nhúng Google Maps, name: mapEmbed, widget: string, required: false, hint: 'Trên Google Maps: Chia sẻ > Nhúng bản đồ, chỉ dán phần đường dẫn trong src="..."' }
+          - { label: Facebook, name: facebook, widget: string, required: false }
+          - { label: YouTube, name: youtube, widget: string, required: false }
+          - { label: TikTok, name: tiktok, widget: string, required: false }
+          - { label: Năm thành lập, name: founded, widget: string, required: false }
+          - label: Số liệu nổi bật
+            name: stats
+            widget: list
+            hint: 'Để trống giá trị thì số liệu đó không hiện.'
+            fields:
+              - { label: Giá trị, name: value, widget: string, required: false }
+              - { label: Nhãn, name: label, widget: string }

@@ -1,0 +1,69 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import FloatingContact from '../components/FloatingContact.astro';
+import site from '../data/site.json';
+import { imageUrl } from '../lib/img';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  overlayHeader?: boolean;
+  noindex?: boolean;
+  jsonld?: Record<string, unknown>;
+}
+const {
+  title,
+  description = 'Xưởng điêu khắc Trần Sâm nhận làm phù điêu, tượng chân dung, tượng Phật giáo, tượng cổ điển, mô hình quảng cáo và linh vật theo yêu cầu. Nặn mẫu đất sét để bạn duyệt trước khi đúc.',
+  image = 'phu-dieu-decor-14',
+  overlayHeader = false,
+  noindex = false,
+  jsonld,
+} = Astro.props;
+const fullTitle = title ? `${title} | ${site.name}` : `${site.name} — ${site.tagline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
+const ogImage = new URL(imageUrl(image, 1600), Astro.site ?? Astro.url).href;
+
+const business = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: site.name,
+  description,
+  url: new URL('/', Astro.site ?? Astro.url).href,
+  image: ogImage,
+  ...(site.phoneHref ? { telephone: site.phoneHref } : {}),
+  ...(site.address && !site.address.startsWith('[') ? { address: site.address } : {}),
+};
+---
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#102119" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="vi_VN" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" type="application/rss+xml" title={`Tin tức — ${site.name}`} href="/tin-tuc/rss.xml" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonld ?? business)} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Chuyển đến nội dung</a>
+    <Header overlay={overlayHeader} />
+    <main id="main"><slot /></main>
+    <Footer />
+    <FloatingContact />
+  </body>
+</html>

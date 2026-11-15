@@ -1,0 +1,31 @@
+---
+import Icon from './Icon.astro';
+import site from '../data/site.json';
+const zalo = site.zalo ? `https://zalo.me/${site.zalo.replace(/\D/g, '')}` : '';
+const tel = site.phoneHref ? `tel:${site.phoneHref}` : '';
+// Trên trang liên hệ thì không cần nút "Nhận báo giá" nữa
+const onContact = /^\/(lien-he|cam-on)\//.test(Astro.url.pathname);
+const show = zalo || tel || !onContact;
+---
+{show && (
+  <div class="fc" aria-label="Liên hệ nhanh" role="region">
+    {zalo && <a class="item" href={zalo} target="_blank" rel="noopener"><Icon name="chat" /><span>Zalo</span></a>}
+    {tel && <a class="item" href={tel}><Icon name="phone" /><span>Gọi xưởng</span></a>}
+    {!onContact && <a class="item main" href="/lien-he/"><span>Nhận báo giá</span></a>}
+  </div>
+)}
+
+<style>
+  .fc { position: fixed; z-index: 40; right: 1.25rem; bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end; }
+  .item { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 3rem; padding: 0 1.1rem; background: var(--plaster); color: var(--ink); border: 1px solid var(--rule); text-decoration: none; font-weight: 500; font-size: 0.95rem; box-shadow: 0 6px 24px -8px rgba(16, 33, 25, 0.35); transition: background-color 200ms; }
+  .item:hover { background: var(--verdigris-100); }
+  .item :global(svg) { width: 1.2rem; height: 1.2rem; }
+  .main { display: none; }
+  /* Màn hình nhỏ: thanh liên hệ dưới đáy, chạm được bằng ngón cái */
+  @media (max-width: 720px) {
+    .fc { left: 0; right: 0; bottom: 0; flex-direction: row; gap: 0; padding: 0.5rem; padding-bottom: max(0.5rem, env(safe-area-inset-bottom)); background: var(--plaster); border-top: 1px solid var(--rule); }
+    .item { flex: 1; justify-content: center; box-shadow: none; border: 0; }
+    .main { display: inline-flex; background: var(--jade-600); color: #fff; }
+    .main:hover { background: var(--jade-700); }
+  }
+</style>

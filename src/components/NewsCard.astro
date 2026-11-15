@@ -1,0 +1,28 @@
+---
+import Picture from './Picture.astro';
+interface Props {
+  post: { id: string; data: { title: string; date: Date; topic: string; excerpt: string; cover: string; coverAlt: string } };
+  large?: boolean;
+}
+const { post, large = false } = Astro.props;
+const d = post.data;
+const date = d.date.toLocaleDateString('vi-VN', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+<article class:list={['news', { large }]}>
+  <a href={`/tin-tuc/${post.id}/`} class="link">
+    <Picture src={d.cover} alt={d.coverAlt} ratio={large ? '16 / 10' : '3 / 2'} sizes={large ? '(max-width: 900px) 100vw, 60vw' : '(max-width: 900px) 100vw, 30vw'} />
+    <span class="meta"><span>{d.topic}</span><time datetime={d.date.toISOString()}>{date}</time></span>
+    <h3 class="title">{d.title}</h3>
+    {large && <p class="ex">{d.excerpt}</p>}
+  </a>
+</article>
+<style>
+  .link { display: block; text-decoration: none; color: inherit; }
+  .meta { display: flex; justify-content: space-between; gap: 1rem; padding-top: 0.85rem; margin-top: 0.85rem; border-top: 1px solid var(--rule); font-size: var(--step--1); color: var(--fg-soft); }
+  .title { margin-top: 0.6rem; font-size: 1.45rem; line-height: 1.2; }
+  .large .title { font-size: var(--step-3); }
+  .ex { margin-top: 0.75rem; color: var(--fg-soft); max-width: 56ch; }
+  .link:hover .title { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
+  .link :global(.pic img) { transition: transform 700ms var(--ease-out); }
+  .link:hover :global(.pic img) { transform: scale(1.03); }
+</style>

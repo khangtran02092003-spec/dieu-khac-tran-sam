@@ -1,0 +1,222 @@
+---
+// Hero "ánh sáng xiên": bức phù điêu chìm trong tối, một vệt đèn đi theo con trỏ làm hiện từng lớp nổi —
+// đúng cách thợ phù điêu soi mẫu bằng đèn chiếu nghiêng.
+import { resolveImage } from '../lib/img';
+interface Props { image: string; alt: string; caption: string; captionMeta: string; }
+const { image, alt, caption, captionMeta } = Astro.props;
+const r = resolveImage(image);
+const common = { src: r.src, srcset: r.srcset, sizes: '100vw', width: r.width, height: r.height, decoding: 'async' as const };
+---
+<section class="hero on-dark" data-raking aria-labelledby="hero-title">
+  <div class="stage" aria-hidden="true">
+    <img {...common} class="layer base" alt="" fetchpriority="high" />
+    <img {...common} class="layer lit" alt="" />
+    <div class="glow"></div>
+    <div class="veil"></div>
+  </div>
+  <span class="sr-only">{alt}</span>
+
+  <!-- Con trỏ: đèn bão (lồng đèn dầu kim loại, màu đồng cũ). Tâm ngọn lửa (40,62) = vị trí chuột = tâm quầng sáng. -->
+  <div class="lamp" aria-hidden="true" data-lamp>
+    <svg viewBox="0 0 80 120" width="80" height="120">
+      <defs>
+        <radialGradient id="ln-glow" cx="40" cy="62" r="40" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#ffc06a" stop-opacity=".5" />
+          <stop offset=".4" stop-color="#ff9d3c" stop-opacity=".16" />
+          <stop offset="1" stop-color="#ff9d3c" stop-opacity="0" />
+        </radialGradient>
+        <!-- bầu kính hổ phách, sáng nhất quanh lửa -->
+        <radialGradient id="ln-globe" cx="40" cy="63" r="17" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#ffe7b0" />
+          <stop offset=".35" stop-color="#ffb04a" stop-opacity=".95" />
+          <stop offset=".8" stop-color="#c8641c" stop-opacity=".85" />
+          <stop offset="1" stop-color="#7a3810" stop-opacity=".9" />
+        </radialGradient>
+        <linearGradient id="ln-flame" x1="0" y1="53" x2="0" y2="70" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#ff8a1e" />
+          <stop offset=".55" stop-color="#ffd25a" />
+          <stop offset="1" stop-color="#fff6d6" />
+        </linearGradient>
+        <!-- kim loại đồng cũ: tối hai mép, sáng ánh lửa ở giữa -->
+        <linearGradient id="ln-bronze" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#24170c" />
+          <stop offset=".3" stop-color="#6b3f1c" />
+          <stop offset=".55" stop-color="#c07a3c" />
+          <stop offset=".75" stop-color="#7a4520" />
+          <stop offset="1" stop-color="#2a1a0d" />
+        </linearGradient>
+        <linearGradient id="ln-tube" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#2a1a0d" />
+          <stop offset=".5" stop-color="#8a5226" />
+          <stop offset="1" stop-color="#2a1a0d" />
+        </linearGradient>
+      </defs>
+
+      <!-- quầng sáng quanh lửa -->
+      <circle cx="40" cy="62" r="40" fill="url(#ln-glow)" />
+
+      <!-- quai xách lớn -->
+      <path d="M17 60 C14 26 28 5 40 5 C52 5 66 26 63 60" fill="none" stroke="#2b1b0e" stroke-width="1.8" stroke-linecap="round" />
+      <path d="M17 60 C14 26 28 5 40 5 C52 5 66 26 63 60" fill="none" stroke="#a8693a" stroke-width=".6" stroke-linecap="round" opacity=".6" />
+      <!-- khoen nhỏ trên nắp -->
+      <path d="M35.5 22 C35.5 14.5 44.5 14.5 44.5 22" fill="none" stroke="#2b1b0e" stroke-width="1.6" stroke-linecap="round" />
+
+      <!-- hai ống đỡ hai bên (từ nắp xuống bình dầu) -->
+      <path d="M27 29 C19 30 16.5 36 17 44 L18.5 88 C18.8 93 21 95 25 95" fill="none" stroke="url(#ln-tube)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M53 29 C61 30 63.5 36 63 44 L61.5 88 C61.2 93 59 95 55 95" fill="none" stroke="url(#ln-tube)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" />
+
+      <!-- nắp chóp -->
+      <path d="M25 26 H55 L52 30 H28 Z" fill="url(#ln-bronze)" stroke="#1d1209" stroke-width=".5" />
+      <ellipse cx="40" cy="25.6" rx="15" ry="1.6" fill="#8a5226" />
+      <!-- ống khói có lỗ thoát khí (ánh lửa lọt ra) -->
+      <rect x="30.5" y="30" width="19" height="12" rx="1.5" fill="url(#ln-bronze)" stroke="#1d1209" stroke-width=".5" />
+      <line x1="30.5" y1="33.5" x2="49.5" y2="33.5" stroke="#1d1209" stroke-width=".5" opacity=".7" />
+      <circle cx="35" cy="38" r="1.1" fill="#ffb24d" />
+      <circle cx="40" cy="38" r="1.1" fill="#ffcf7a" />
+      <circle cx="45" cy="38" r="1.1" fill="#ffb24d" />
+      <!-- cổ đèn -->
+      <path d="M29 42 H51 L53 46 H27 Z" fill="url(#ln-bronze)" stroke="#1d1209" stroke-width=".5" />
+
+      <!-- bầu kính hổ phách -->
+      <path d="M28.5 46 C22 52 21.5 71 28.5 78 H51.5 C58.5 71 58 52 51.5 46 Z" fill="url(#ln-globe)" stroke="#3a1e0c" stroke-width=".7" />
+      <path d="M29.5 50 C26 55 25.6 64 27.6 71" fill="none" stroke="#fff2d0" stroke-width="1" stroke-linecap="round" opacity=".55" />
+
+      <!-- ngọn lửa -->
+      <g class="flame">
+        <path d="M40 52 C43.6 57.5 45.5 61.5 45.5 64.8 C45.5 68.2 43.1 70.5 40 70.5 C36.9 70.5 34.5 68.2 34.5 64.8 C34.5 61.5 36.4 57.5 40 52 Z" fill="url(#ln-flame)" />
+        <path d="M40 59.5 C41.6 62 42.4 64 42.4 65.6 C42.4 67.4 41.4 68.6 40 68.6 C38.6 68.6 37.6 67.4 37.6 65.6 C37.6 64 38.4 62 40 59.5 Z" fill="#fffdf0" />
+      </g>
+
+      <!-- lưới thép bảo vệ bầu kính (đan chéo) -->
+      <path d="M27 54 C35 60 45 66 53.5 71" fill="none" stroke="#2b1b0e" stroke-width=".8" stroke-linecap="round" />
+      <path d="M53 54 C45 60 35 66 26.5 71" fill="none" stroke="#2b1b0e" stroke-width=".8" stroke-linecap="round" />
+      <path d="M24.8 62 C33 64.5 47 64.5 55.2 62" fill="none" stroke="#2b1b0e" stroke-width=".7" stroke-linecap="round" opacity=".8" />
+
+      <!-- vành đỡ bầu kính + bộ bấc -->
+      <rect x="26" y="78" width="28" height="3.5" rx="1" fill="url(#ln-bronze)" stroke="#1d1209" stroke-width=".5" />
+      <rect x="31.5" y="81.5" width="17" height="6.5" rx="1" fill="url(#ln-bronze)" stroke="#1d1209" stroke-width=".5" />
+      <!-- núm vặn bấc -->
+      <line x1="48.5" y1="85" x2="53" y2="85" stroke="#2b1b0e" stroke-width="1.4" />
+      <circle cx="56" cy="85" r="3.4" fill="url(#ln-bronze)" stroke="#1d1209" stroke-width=".6" />
+      <circle cx="55.2" cy="84.2" r="1" fill="#e0a060" opacity=".7" />
+
+      <!-- bình dầu tròn -->
+      <path d="M21 92 C21 88.5 59 88.5 59 92 L61.5 106 C61.5 111 18.5 111 18.5 106 Z" fill="url(#ln-bronze)" stroke="#1d1209" stroke-width=".6" />
+      <path d="M21.5 96 C30 98.5 50 98.5 58.5 96" fill="none" stroke="#e0a060" stroke-width=".7" opacity=".55" />
+      <ellipse cx="40" cy="91.6" rx="19" ry="2.6" fill="#8a5226" opacity=".85" />
+      <!-- đế -->
+      <path d="M18 106 C18 111.5 62 111.5 62 106 L62 108.5 C62 114 18 114 18 108.5 Z" fill="#24170c" />
+    </svg>
+  </div>
+
+  <div class="wrap content">
+    <h1 id="hero-title">Mỗi bức phù điêu bắt đầu từ bức tường của bạn</h1>
+    <div class="foot">
+      <p class="lede">Điêu khắc Trần Sâm nặn mẫu đất sét theo đúng không gian của bạn, để bạn duyệt từng chi tiết trước khi đúc composite, đắp xi măng hay hoàn thiện giả đồng.</p>
+      <div class="ctas">
+        <a class="btn btn-primary" href="/lien-he/">Gửi ý tưởng, nhận báo giá</a>
+        <a class="btn btn-ghost" href="/tac-pham/">Xem tác phẩm</a>
+      </div>
+    </div>
+  </div>
+
+  <p class="caption">
+    <span class="t">{caption}</span>
+    <span class="m">{captionMeta}</span>
+    <span class="hint" data-hint>Cầm đèn bão bằng con chuột và soi lên bức phù điêu</span>
+  </p>
+</section>
+
+<style>
+  .hero { position: relative; min-height: 100svh; display: flex; align-items: flex-end; overflow: hidden; isolation: isolate; }
+  .stage { position: absolute; inset: 0; z-index: -1; --x: 32%; --y: 34%; }
+  .layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; }
+  .base { filter: brightness(0.24) saturate(0.55) contrast(1.1); }
+  /* Lớp sáng chỉ lộ ra trong vệt đèn hình elip nghiêng */
+  .lit {
+    filter: brightness(1.12) contrast(1.22) saturate(0.9);
+    -webkit-mask-image: radial-gradient(ellipse 30% 42% at var(--x) var(--y), #000 0%, rgba(0,0,0,0.75) 35%, transparent 72%);
+    mask-image: radial-gradient(ellipse 30% 42% at var(--x) var(--y), #000 0%, rgba(0,0,0,0.75) 35%, transparent 72%);
+  }
+  /* ánh lửa đèn dầu: vàng cam ấm */
+  .glow { position: absolute; inset: 0; background: radial-gradient(ellipse 26% 36% at var(--x) var(--y), rgba(255, 196, 120, 0.22), rgba(255, 170, 90, 0.06) 45%, transparent 70%); mix-blend-mode: screen; }
+  .veil { position: absolute; inset: 0; background: linear-gradient(to top, rgba(16, 33, 25, 0.96) 0%, rgba(16, 33, 25, 0.55) 38%, rgba(16, 33, 25, 0.1) 70%), linear-gradient(to right, rgba(16, 33, 25, 0.5), transparent 55%); }
+
+  .content { padding-top: 8rem; padding-bottom: clamp(2.5rem, 2rem + 4vw, 5rem); position: relative; }
+  h1 { max-width: 14ch; font-variation-settings: 'wdth' 68; font-weight: 450; }
+  .foot { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 2rem 3rem; margin-top: clamp(1.5rem, 1rem + 2vw, 3rem); }
+  .lede { color: #cddbd2; margin: 0; max-width: 46ch; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+  /* Con trỏ đèn: chỉ bật với chuột (JS thêm .has-lamp) */
+  .lamp { position: absolute; left: 0; top: 0; z-index: 3; width: 80px; height: 120px; pointer-events: none; opacity: 0; transform: translate3d(-200px, -200px, 0); transition: opacity 250ms var(--ease-out); filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.5)); will-change: transform; }
+  .lamp svg { display: block; overflow: visible; }
+  /* lửa lay nhẹ */
+  .lamp .flame { transform-origin: 40px 70px; animation: flicker 1.6s ease-in-out infinite; }
+  @keyframes flicker {
+    0%, 100% { transform: scale(1, 1) skewX(0deg); }
+    30% { transform: scale(0.96, 1.06) skewX(-2deg); }
+    55% { transform: scale(1.03, 0.95) skewX(1.5deg); }
+    80% { transform: scale(0.98, 1.03) skewX(-1deg); }
+  }
+  .hero.has-lamp { cursor: none; }
+  .hero.has-lamp :is(a, button) { cursor: pointer; }
+  .hero.lamp-on .lamp { opacity: 1; }
+  .hero.lamp-on.over-ui .lamp { opacity: 0; }
+
+  .caption { position: absolute; top: 6.5rem; right: var(--gutter); max-width: 18rem; margin: 0; padding-top: 0.75rem; border-top: 1px solid var(--rule-dark); font-size: var(--step--1); color: #b9c9bf; }
+  .caption .t { display: block; color: var(--plaster); font-family: var(--font-display); font-variation-settings: 'wdth' 85; font-size: 1.05rem; }
+  .caption .m { display: block; margin-top: 0.2rem; }
+  .caption .hint { display: block; margin-top: 0.75rem; color: var(--verdigris-300); transition: opacity 600ms; }
+  .hero.touched .hint { opacity: 0; }
+  @media (hover: none), (prefers-reduced-motion: reduce) { .caption .hint { display: none; } }
+  @media (max-width: 720px) {
+    .caption { display: none; }
+    .stage { --x: 50%; --y: 30%; }
+    .lit { -webkit-mask-image: radial-gradient(ellipse 60% 38% at var(--x) var(--y), #000 0%, rgba(0,0,0,0.7) 40%, transparent 75%); mask-image: radial-gradient(ellipse 60% 38% at var(--x) var(--y), #000 0%, rgba(0,0,0,0.7) 40%, transparent 75%); }
+  }
+</style>
+
+<script>
+  const hero = document.querySelector<HTMLElement>('[data-raking]');
+  const stage = hero?.querySelector<HTMLElement>('.stage');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  if (hero && stage && !still) {
+    // Vị trí hiện tại và đích, tính theo %. Đèn trượt mềm về phía con trỏ như người cầm đèn.
+    let x = 32, y = 34, tx = 32, ty = 34, raf = 0, t0 = performance.now(), userMoved = false, visible = true;
+    const set = () => { stage.style.setProperty('--x', x.toFixed(2) + '%'); stage.style.setProperty('--y', y.toFixed(2) + '%'); };
+    const tick = (now: number) => {
+      if (!userMoved) {
+        // Khi chưa có tương tác: đèn lướt chậm qua bức phù điêu, một vòng ~14 giây
+        const t = (now - t0) / 1000;
+        tx = 50 + Math.sin(t * 0.45) * 26;
+        ty = 38 + Math.sin(t * 0.9 + 1) * 10;
+      }
+      x += (tx - x) * 0.07; y += (ty - y) * 0.07;
+      set();
+      raf = visible ? requestAnimationFrame(tick) : 0;
+    };
+    if (finePointer) {
+      const lamp = hero.querySelector<HTMLElement>('[data-lamp]');
+      hero.classList.add('has-lamp');
+      hero.addEventListener('pointermove', (e) => {
+        const b = hero.getBoundingClientRect();
+        const px = e.clientX - b.left, py = e.clientY - b.top;
+        tx = (px / b.width) * 100;
+        ty = (py / b.height) * 100;
+        // Đèn bám chuột ngay lập tức; vệt sáng trên phù điêu trượt theo sau cho mềm
+        if (lamp) lamp.style.transform = `translate3d(${px - 40}px, ${py - 62}px, 0)`;
+        hero.classList.add('lamp-on');
+        hero.classList.toggle('over-ui', !!(e.target as HTMLElement).closest('a, button'));
+        if (!userMoved) { userMoved = true; hero.classList.add('touched'); }
+      });
+      hero.addEventListener('pointerleave', () => hero.classList.remove('lamp-on'));
+    }
+    new IntersectionObserver(([en]) => {
+      visible = en.isIntersecting;
+      if (visible && !raf) raf = requestAnimationFrame(tick);
+    }).observe(hero);
+  }
+</script>

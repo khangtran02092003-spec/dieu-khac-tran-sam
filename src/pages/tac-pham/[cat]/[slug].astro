@@ -1,0 +1,71 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import Gallery from '../../../components/Gallery.astro';
+import WorkCard from '../../../components/WorkCard.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import { categoryBySlug } from '../../../data/categories';
+
+export async function getStaticPaths() {
+  const all = await getCollection('tac-pham');
+  return all.map((w) => ({ params: { cat: w.data.category, slug: w.id }, props: { work: w, all } }));
+}
+const { work, all } = Astro.props as { work: any; all: any[] };
+const d = work.data;
+const cat = categoryBySlug[d.category];
+const { Content } = await render(work);
+const related = all.filter((w) => w.data.category === d.category && w.id !== work.id).sort((a, b) => a.data.order - b.data.order).slice(0, 3);
+const facts = [
+  ['Dòng tác phẩm', cat.name],
+  ['Chất liệu', d.material],
+  ['Kích thước', d.size],
+  ['Công trình', d.location],
+  ['Năm', d.year],
+].filter(([, v]) => v);
+---
+<Base title={d.title} description={d.summary ?? `${d.title}, ${cat.name}, Điêu khắc Trần Sâm.`} image={d.images[0]}>
+  <PageHead small title={d.title} crumbs={[{ href: '/tac-pham/', label: 'Tác phẩm' }, { href: `/tac-pham/${cat.slug}/`, label: cat.name }]} />
+
+  <article class="wrap grid12 work">
+    <div class="g"><Gallery images={d.images} title={d.title} video={d.video} /></div>
+    <aside class="info">
+      {d.summary && <p class="lede">{d.summary}</p>}
+      <div class="prose"><Content /></div>
+      <dl class="facts">
+        {facts.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+      <a class="btn btn-primary" href={`/lien-he/?loai=${cat.slug}`}>Làm một tác phẩm tương tự</a>
+      <p class="hint">Gửi ảnh không gian của bạn, xưởng điều chỉnh mẫu cho vừa.</p>
+    </aside>
+  </article>
+
+  {related.length > 0 && (
+    <section class="wrap rel" aria-labelledby="rel-h">
+      <div class="rel-head">
+        <h2 id="rel-h">Cùng dòng {cat.name.toLowerCase()}</h2>
+        <a class="link-quiet" href={`/tac-pham/${cat.slug}/`}>Xem tất cả</a>
+      </div>
+      <ul>{related.map((w) => <li><WorkCard work={w} showCategory={false} /></li>)}</ul>
+    </section>
+  )}
+  <CtaBand preset={cat.slug} />
+</Base>
+
+<style>
+  .work { row-gap: 2.5rem; }
+  .g { grid-column: 1 / span 8; }
+  .info { grid-column: 10 / span 3; position: sticky; top: 6rem; align-self: start; }
+  .info .lede { margin-bottom: 1.5rem; }
+  .facts { margin: 1.5rem 0 2rem; border-top: 1px solid var(--rule); }
+  .facts div { padding: 0.75rem 0; border-bottom: 1px solid var(--rule); }
+  .facts dt { font-size: var(--step--1); color: var(--fg-soft); }
+  .facts dd { margin: 0.15rem 0 0; }
+  .hint { font-size: 0.9rem; color: var(--fg-soft); margin-top: 0.85rem; }
+  .rel { padding-block: var(--section); }
+  .rel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 2.5rem; }
+  .rel h2 { font-size: var(--step-3); }
+  .rel ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); }
+  @media (max-width: 960px) { .g, .info { grid-column: 1 / -1; } .info { position: static; } }
+  @media (max-width: 720px) { .rel ul { grid-template-columns: 1fr; gap: 2.5rem; } }
+</style>

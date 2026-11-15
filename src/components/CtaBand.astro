@@ -1,0 +1,26 @@
+---
+import site from '../data/site.json';
+interface Props { title?: string; text?: string; preset?: string }
+const { title = 'Có một bức tường, một ý tưởng, hay chỉ một tấm ảnh mẫu?', text = 'Gửi cho xưởng. Bạn nhận lại phác thảo và báo giá, không mất phí tư vấn.', preset } = Astro.props;
+const href = preset ? `/lien-he/?loai=${preset}` : '/lien-he/';
+---
+<section class="on-dark band">
+  <div class="wrap inner">
+    <h2>{title}</h2>
+    <div class="side">
+      <p>{text}</p>
+      <div class="btns">
+        <a class="btn btn-primary" href={href}>Gửi yêu cầu báo giá</a>
+        {site.zalo && <a class="btn btn-ghost" href={`https://zalo.me/${site.zalo.replace(/\D/g, '')}`} target="_blank" rel="noopener">Nhắn Zalo</a>}
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .band { padding-block: clamp(4rem, 3rem + 5vw, 8rem); }
+  .inner { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 2rem var(--gutter); align-items: end; }
+  h2 { max-width: 16ch; }
+  p { color: var(--fg-soft); max-width: 38ch; }
+  .btns { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+  @media (max-width: 860px) { .inner { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,250 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import RakingHero from '../components/RakingHero.astro';
+import Picture from '../components/Picture.astro';
+import WorkCard from '../components/WorkCard.astro';
+import NewsCard from '../components/NewsCard.astro';
+import QuoteForm from '../components/QuoteForm.astro';
+import Icon from '../components/Icon.astro';
+import { categories, process, materials } from '../data/categories';
+import site from '../data/site.json';
+
+const works = (await getCollection('tac-pham')).sort((a, b) => a.data.order - b.data.order);
+// Mỗi dòng tác phẩm lấy một tác phẩm tiêu biểu (theo thứ tự dòng), tối đa 6
+const featured = categories
+  .map((c) => works.find((w) => w.data.featured && w.data.category === c.slug))
+  .filter((w): w is (typeof works)[number] => !!w)
+  .slice(0, 6);
+const countBy = (slug: string) => works.filter((w) => w.data.category === slug).length;
+const posts = (await getCollection('tin-tuc', ({ data }) => !data.draft)).sort((a, b) => +b.data.date - +a.data.date).slice(0, 3);
+const stats = site.stats.filter((s) => s.value);
+const museum = works.find((w) => w.id === 'cum-tuong-nha-trung-bay');
+---
+<Base overlayHeader>
+  <RakingHero
+    image="phu-dieu-decor-14"
+    alt="Mẫu phù điêu đất sét nhiều nhân vật đang hoàn thiện trong xưởng Trần Sâm"
+    caption="Phù điêu tích truyện nhóm người"
+    captionMeta="Mẫu đất sét tỷ lệ 1:1, trước khi đúc composite"
+  />
+
+  <!-- Giới thiệu ngắn -->
+  <section class="section intro">
+    <div class="wrap grid12">
+      <h2 class="i-h">Một xưởng, mười dòng tác phẩm, cùng một cách làm</h2>
+      <div class="i-p">
+        <p class="lede">Từ bức phù điêu tường nhà, pho tượng thờ, tượng chân dung ông bà, đến linh vật cho nhà máy và mô hình phát sáng cho quán ăn: mọi tác phẩm đều đi qua tay nghệ nhân nặn mẫu, và bạn duyệt mẫu trước khi xưởng đúc.</p>
+        {stats.length > 0 && (
+          <dl class="stats">
+            {stats.map((s) => <div><dt>{s.label}</dt><dd>{s.value}</dd></div>)}
+          </dl>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <!-- Danh mục dòng tác phẩm: dạng mục lục catalogue -->
+  <section class="section-tight cats" aria-labelledby="cats-h">
+    <div class="wrap">
+      <div class="head">
+        <h2 id="cats-h">Xưởng làm những gì</h2>
+        <a class="link-quiet" href="/dich-vu/">Xem chi tiết từng dịch vụ</a>
+      </div>
+      <ul class="cat-list">
+        {categories.map((c) => (
+          <li>
+            <a href={`/tac-pham/${c.slug}/`}>
+              <Picture src={c.cover} alt="" ratio="1 / 1" sizes="120px" class="thumb" />
+              <span class="cn">{c.name}</span>
+              <span class="cs">{c.short}</span>
+              <span class="cc">{countBy(c.slug)} tác phẩm</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Tác phẩm tiêu biểu: lưới đều 3 cột, cùng tỷ lệ khung để các hàng thẳng nhau -->
+  <section class="section featured" aria-labelledby="feat-h">
+    <div class="wrap">
+      <div class="head">
+        <h2 id="feat-h">Tác phẩm tiêu biểu</h2>
+        <a class="link-quiet" href="/tac-pham/">Toàn bộ {works.length} tác phẩm</a>
+      </div>
+      <ul class="feat-grid">
+        {featured.map((w) => (
+          <li><WorkCard work={w} arch ratio="4 / 5" sizes="(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 33vw" /></li>
+        ))}
+      </ul>
+      <div class="feat-more"><a class="btn btn-ghost" href="/tac-pham/">Xem toàn bộ {works.length} tác phẩm</a></div>
+    </div>
+  </section>
+
+  <!-- Quy trình -->
+  <section class="section on-cream process" aria-labelledby="proc-h">
+    <div class="wrap">
+      <div class="head">
+        <h2 id="proc-h">Sáu bước, bạn duyệt ở mỗi bước</h2>
+        <a class="link-quiet" href="/quy-trinh/">Quy trình chi tiết</a>
+      </div>
+      <ol class="steps">
+        {process.map((s, i) => (
+          <li>
+            <Picture src={s.image} alt="" ratio="4 / 3" sizes="(max-width: 720px) 100vw, 33vw" />
+            <span class="num engraved" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- Công trình tiêu biểu -->
+  {museum && (
+    <section class="section on-dark story" aria-labelledby="story-h">
+      <div class="wrap grid12">
+        <div class="s-img">
+          <Picture src="bao-tang-02" alt="Bức phù điêu tường lịch sử ngoài trời, nhiều nhóm nhân vật, trước bồn hoa" sizes="(max-width: 900px) 100vw, 60vw" ratio="4 / 3" />
+        </div>
+        <div class="s-text">
+          <span class="kicker">Công trình bảo tàng và di tích</span>
+          <h2 id="story-h">Kể lịch sử bằng khối và bóng</h2>
+          <p>Với nhà truyền thống và khu di tích, xưởng làm cả phù điêu tường ngoài trời lẫn cụm tượng người kích thước thật trong nhà trưng bày. Mỗi nhân vật được nặn riêng theo tư liệu, dàn dựng thành cảnh trước tranh tường, rồi sơn màu theo ánh sáng của phòng trưng bày.</p>
+          <div class="s-thumbs">
+            {museum.data.images.slice(0, 3).map((im) => <Picture src={im} alt="" ratio="1 / 1" sizes="160px" />)}
+          </div>
+          <a class="btn btn-ghost" href="/tac-pham/bao-tang/">Xem các công trình bảo tàng</a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Chất liệu -->
+  <section class="section materials" aria-labelledby="mat-h">
+    <div class="wrap grid12">
+      <div class="mat-head">
+        <h2 id="mat-h">Chất liệu và bề mặt</h2>
+        <p class="lede">Cùng một mẫu đất sét có thể ra nhiều tác phẩm khác nhau, tùy chất liệu đúc và lớp hoàn thiện.</p>
+      </div>
+      <dl class="mat-list">
+        {materials.map((m) => (<div><dt>{m.name}</dt><dd>{m.text}</dd></div>))}
+      </dl>
+    </div>
+  </section>
+
+  <!-- Tin tức -->
+  {posts.length > 0 && (
+    <section class="section on-cream news" aria-labelledby="news-h">
+      <div class="wrap">
+        <div class="head">
+          <h2 id="news-h">Ghi chép từ xưởng</h2>
+          <a class="link-quiet" href="/tin-tuc/">Tất cả bài viết</a>
+        </div>
+        <div class="news-grid">
+          <div class="n-main"><NewsCard post={posts[0]} large /></div>
+          <div class="n-side">{posts.slice(1).map((p) => <NewsCard post={p} />)}</div>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Báo giá -->
+  <section class="section quote" id="bao-gia" aria-labelledby="quote-h">
+    <div class="wrap grid12">
+      <div class="q-head">
+        <h2 id="quote-h">Kể cho xưởng nghe bạn đang nghĩ gì</h2>
+        <p class="lede">Vài dòng mô tả là đủ để bắt đầu. Xưởng gọi lại để hỏi thêm, rồi gửi phác thảo và báo giá.</p>
+        <ul class="q-contact">
+          {site.phoneHref && <li><Icon name="phone" /><a href={`tel:${site.phoneHref}`}>{site.phone}</a></li>}
+          {site.zalo && <li><Icon name="chat" /><a href={`https://zalo.me/${site.zalo.replace(/\D/g, '')}`} target="_blank" rel="noopener">Nhắn Zalo cho xưởng</a></li>}
+          <li><Icon name="clock" /><span>{site.hours}</span></li>
+        </ul>
+      </div>
+      <div class="q-form"><QuoteForm compact /></div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 1rem 2rem; margin-bottom: clamp(2rem, 1.5rem + 2vw, 3.5rem); }
+  .head h2 { max-width: 18ch; }
+  .section-tight { padding-bottom: var(--section); }
+
+  /* Giới thiệu */
+  .i-h { grid-column: 1 / span 6; font-size: var(--step-4); }
+  .i-p { grid-column: 8 / span 5; padding-top: 0.75rem; }
+  .stats { display: flex; flex-wrap: wrap; gap: 2rem 3rem; margin: 2.5rem 0 0; }
+  .stats div { display: flex; flex-direction: column-reverse; }
+  .stats dd { margin: 0; font-family: var(--font-display); font-variation-settings: 'wdth' 70; font-size: var(--step-4); line-height: 1; }
+  .stats dt { font-size: var(--step--1); color: var(--fg-soft); margin-top: 0.4rem; }
+
+  /* Danh mục */
+  .cat-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+  .cat-list a { display: grid; grid-template-columns: 5.5rem minmax(0, 1.1fr) minmax(0, 1.4fr) auto; align-items: center; gap: 1.5rem; padding: 1rem 0; border-bottom: 1px solid var(--rule); text-decoration: none; transition: background-color 200ms; }
+  .cat-list a:hover { background: var(--limestone); }
+  .cat-list :global(.thumb) { width: 5.5rem; }
+  .cn { font-family: var(--font-display); font-variation-settings: 'wdth' 78; font-size: var(--step-2); line-height: 1.15; }
+  .cs { color: var(--fg-soft); }
+  .cc { font-size: var(--step--1); color: var(--fg-soft); padding-right: 0.5rem; white-space: nowrap; }
+  .cat-list a:hover .cn { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
+  @media (max-width: 760px) {
+    .cat-list a { grid-template-columns: 4.5rem 1fr; gap: 0.25rem 1rem; }
+    .cat-list :global(.thumb) { width: 4.5rem; grid-row: span 2; }
+    .cs { grid-column: 2; font-size: 0.95rem; }
+    .cc { display: none; }
+  }
+
+  /* Tác phẩm tiêu biểu: lưới đều */
+  .featured { padding-top: 0; }
+  .feat-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(2.5rem, 2rem + 1.5vw, 3.5rem) var(--gutter); }
+  .feat-more { display: flex; justify-content: center; margin-top: clamp(2.5rem, 2rem + 2vw, 4rem); }
+  @media (max-width: 1000px) { .feat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 640px) { .feat-grid { grid-template-columns: 1fr; } }
+
+  /* Quy trình */
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem var(--gutter); }
+  .steps li { position: relative; }
+  .num { display: block; font-family: var(--font-display); font-variation-settings: 'wdth' 62.5; font-weight: 600; font-size: 4.5rem; line-height: 0.9; margin: 1.25rem 0 0.4rem; }
+  .steps h3 { margin-bottom: 0.5rem; }
+  .steps p { color: var(--fg-soft); margin: 0; }
+  @media (max-width: 900px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .steps { grid-template-columns: 1fr; } }
+
+  /* Câu chuyện */
+  .s-img { grid-column: 1 / span 7; }
+  .s-text { grid-column: 9 / span 4; align-self: center; }
+  .s-text h2 { margin-bottom: 1.5rem; }
+  .s-text p { color: var(--fg-soft); }
+  .s-thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin: 2rem 0; }
+  @media (max-width: 900px) { .s-img, .s-text { grid-column: 1 / -1; } .s-text { margin-top: 2.5rem; } }
+
+  /* Chất liệu */
+  .mat-head { grid-column: 1 / span 4; }
+  .mat-head h2 { margin-bottom: 1.25rem; }
+  .mat-list { grid-column: 6 / span 7; margin: 0; border-top: 1px solid var(--rule); }
+  .mat-list div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 1.5rem; padding: 1.25rem 0; border-bottom: 1px solid var(--rule); }
+  .mat-list dt { font-family: var(--font-display); font-variation-settings: 'wdth' 82; font-size: 1.4rem; line-height: 1.2; }
+  .mat-list dd { margin: 0; color: var(--fg-soft); }
+  @media (max-width: 900px) { .mat-head, .mat-list { grid-column: 1 / -1; } .mat-list { margin-top: 2rem; } .mat-list div { grid-template-columns: 1fr; gap: 0.35rem; } }
+
+  /* Tin tức */
+  .news-grid { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: var(--gutter); }
+  .n-side { display: grid; gap: 2.5rem; }
+  @media (max-width: 900px) { .news-grid { grid-template-columns: 1fr; gap: 3rem; } }
+
+  /* Báo giá */
+  .q-head { grid-column: 1 / span 5; }
+  .q-head h2 { margin-bottom: 1.25rem; }
+  .q-form { grid-column: 7 / span 6; }
+  .q-contact { list-style: none; margin: 2rem 0 0; padding: 0; }
+  .q-contact li { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+  .q-contact :global(svg) { width: 1.2rem; height: 1.2rem; color: var(--jade-600); }
+  @media (max-width: 900px) {
+    .i-h, .i-p, .q-head, .q-form { grid-column: 1 / -1; }
+    .i-p { padding-top: 1.5rem; }
+    .q-form { margin-top: 2.5rem; }
+  }
+</style>

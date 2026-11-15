@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.astro/
+# Ảnh gốc tải từ Google Drive (147 MB) — chỉ dùng để sinh public/images, không đưa lên git
+_raw/
+.env

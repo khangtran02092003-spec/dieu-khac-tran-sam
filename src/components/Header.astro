@@ -1,0 +1,96 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import site from '../data/site.json';
+
+interface Props { overlay?: boolean }
+const { overlay = false } = Astro.props;
+const path = Astro.url.pathname;
+const nav = [
+  { href: '/tac-pham/', label: 'Tác phẩm' },
+  { href: '/dich-vu/', label: 'Dịch vụ' },
+  { href: '/quy-trinh/', label: 'Quy trình' },
+  { href: '/tin-tuc/', label: 'Tin tức' },
+  { href: '/gioi-thieu/', label: 'Về xưởng' },
+];
+const active = (href: string) => path.startsWith(href);
+const hasPhone = !!site.phoneHref;
+---
+<header class:list={['site-header', { overlay }]} data-header>
+  <div class="wrap bar">
+    <a href="/" class="home" aria-label="Điêu khắc Trần Sâm, về trang chủ"><Logo /></a>
+    <nav aria-label="Chính" class="nav">
+      <ul>
+        {nav.map((n) => <li><a href={n.href} aria-current={active(n.href) ? 'page' : undefined}>{n.label}</a></li>)}
+      </ul>
+    </nav>
+    <div class="actions">
+      {hasPhone && <a class="tel" href={`tel:${site.phoneHref}`}><Icon name="phone" />{site.phone}</a>}
+      <a class="btn btn-primary cta" href="/lien-he/">Nhận báo giá</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" data-menu-btn>
+        <Icon name="menu" class="i-open" /><Icon name="close" class="i-close" /><span class="sr-only">Mở menu</span>
+      </button>
+    </div>
+  </div>
+  <div id="mobile-nav" class="mobile-nav" hidden data-mobile-nav>
+    <ul class="wrap">
+      {nav.map((n) => <li><a href={n.href} aria-current={active(n.href) ? 'page' : undefined}>{n.label}</a></li>)}
+      <li><a href="/lien-he/">Liên hệ và báo giá</a></li>
+    </ul>
+  </div>
+</header>
+
+<style>
+  .site-header { position: sticky; top: 0; z-index: 50; background: rgba(251, 250, 246, 0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--rule); color: var(--ink); transition: background-color 300ms var(--ease-out), color 300ms var(--ease-out), border-color 300ms; }
+  .site-header.overlay { position: fixed; inset: 0 0 auto 0; background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; border-color: transparent; color: var(--plaster); }
+  .site-header.overlay.scrolled { background: rgba(16, 33, 25, 0.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-color: var(--rule-dark); }
+  .bar { display: flex; align-items: center; gap: 2rem; min-height: 4.5rem; }
+  .home { text-decoration: none; }
+  .nav { margin-left: auto; }
+  .nav ul { display: flex; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
+  .nav a { display: block; padding: 0.6rem 0.8rem; text-decoration: none; font-size: 0.95rem; position: relative; }
+  .nav a::after { content: ''; position: absolute; left: 0.8rem; right: 0.8rem; bottom: 0.35rem; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 250ms var(--ease-out); }
+  .nav a:hover::after, .nav a[aria-current]::after { transform: scaleX(1); }
+  .actions { display: flex; align-items: center; gap: 1rem; }
+  .tel { display: inline-flex; gap: 0.4rem; align-items: center; text-decoration: none; font-size: 0.95rem; white-space: nowrap; }
+  .tel :global(svg) { width: 1.1rem; height: 1.1rem; }
+  .cta { min-height: 2.75rem; padding: 0.6rem 1.1rem; }
+  .overlay:not(.scrolled) .cta { background: var(--plaster); color: var(--moss-950); }
+  .menu-btn { display: none; width: 3rem; height: 3rem; align-items: center; justify-content: center; background: none; border: 0; cursor: pointer; }
+  .menu-btn :global(svg) { width: 1.6rem; height: 1.6rem; }
+  .menu-btn :global(.i-close) { display: none; }
+  .menu-btn[aria-expanded='true'] :global(.i-open) { display: none; }
+  .menu-btn[aria-expanded='true'] :global(.i-close) { display: block; }
+  .mobile-nav { border-top: 1px solid var(--rule); background: var(--plaster); color: var(--ink); }
+  .mobile-nav ul { list-style: none; margin: 0; padding-block: 0.5rem 1.5rem; }
+  .mobile-nav a { display: block; padding: 0.9rem 0; font-family: var(--font-display); font-variation-settings: 'wdth' 80; font-size: 1.75rem; text-decoration: none; border-bottom: 1px solid var(--rule); }
+
+  @media (max-width: 1080px) { .tel { display: none; } }
+  @media (max-width: 900px) {
+    .nav { display: none; }
+    .actions { margin-left: auto; gap: 0.5rem; }
+    .menu-btn { display: inline-flex; }
+  }
+  @media (max-width: 420px) { .cta { display: none; } }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const btn = document.querySelector<HTMLButtonElement>('[data-menu-btn]');
+  const panel = document.querySelector<HTMLElement>('[data-mobile-nav]');
+  if (header?.classList.contains('overlay')) {
+    const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 40 || !panel?.hidden);
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+  btn?.addEventListener('click', () => {
+    const open = btn.getAttribute('aria-expanded') !== 'true';
+    btn.setAttribute('aria-expanded', String(open));
+    btn.querySelector('.sr-only')!.textContent = open ? 'Đóng menu' : 'Mở menu';
+    if (panel) panel.hidden = !open;
+    header?.classList.toggle('scrolled', open || window.scrollY > 40);
+  });
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && btn?.getAttribute('aria-expanded') === 'true') { btn.click(); btn.focus(); }
+  });
+</script>

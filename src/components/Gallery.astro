@@ -1,0 +1,311 @@
+---
+import Picture from './Picture.astro';
+import Icon from './Icon.astro';
+import { imageUrl, resolveImage } from '../lib/img';
+interface Props { images: string[]; title: string; video?: string }
+const { images, title, video } = Astro.props;
+const many = images.length > 1;
+const first = resolveImage(images[0]);
+// Dữ liệu cho JS đổi ảnh chính: src/srcset hiển thị + bản lớn cho kính lúp và xem toàn màn hình
+const data = images.map((s) => {
+  const r = resolveImage(s);
+  return { src: r.src, srcset: r.srcset ?? '', w: r.width ?? 0, h: r.height ?? 0, big: imageUrl(s, 2400) };
+});
+---
+<div class="gal" data-gallery>
+  <div class="stage">
+    <button class="main" type="button" data-main aria-label={`Xem toàn màn hình: ${title}, ảnh 1 trên ${images.length}`}>
+      <img
+        class="main-img"
+        src={first.src}
+        srcset={first.srcset}
+        sizes="(max-width: 960px) 100vw, 62vw"
+        width={first.width}
+        height={first.height}
+        alt={`${title}, ảnh 1`}
+        fetchpriority="high"
+        decoding="async"
+        data-main-img
+      />
+      <!-- Kính lúp: phóng to vùng ảnh dưới con trỏ (chỉ với chuột) -->
+      <span class="lens" aria-hidden="true" data-lens></span>
+      <span class="zoom"><Icon name="expand" /> <span data-zoom-label>Phóng to</span></span>
+    </button>
+    {many && (
+      <>
+        <!-- Nút tròn hai vòng viền như phù điêu tròn; mũi tên dài nét mảnh như đường đục -->
+        <button class="nav prev-img" type="button" data-step="-1">
+          <svg class="chisel" viewBox="0 0 34 14" aria-hidden="true"><path d="M33 7H2.5" /><path d="M8.5 1.5 2 7l6.5 5.5" /></svg>
+          <span class="sr-only">Ảnh trước</span>
+        </button>
+        <button class="nav next-img" type="button" data-step="1">
+          <svg class="chisel" viewBox="0 0 34 14" aria-hidden="true"><path d="M1 7h30.5" /><path d="M25.5 1.5 32 7l-6.5 5.5" /></svg>
+          <span class="sr-only">Ảnh sau</span>
+        </button>
+        <!-- Số đếm: bia vòm nhỏ, phân số dọc như nhãn hiện vật -->
+        <span class="counter" data-counter>
+          <span class="c-cur" aria-hidden="true" data-cur>01</span>
+          <span class="c-rule" aria-hidden="true"></span>
+          <span class="c-tot" aria-hidden="true">{String(images.length).padStart(2, '0')}</span>
+          <span class="sr-only" aria-live="polite" data-counter-sr>Ảnh 1 trên {images.length}</span>
+        </span>
+      </>
+    )}
+  </div>
+
+  {many && (
+    <div class="thumbs" role="group" aria-label="Chọn ảnh">
+      {images.map((src, i) => (
+        <button type="button" class="thumb" data-thumb={i} aria-current={i === 0 ? 'true' : undefined} aria-label={`Ảnh ${i + 1} trên ${images.length}`}>
+          <Picture src={src} alt="" ratio="1 / 1" sizes="(max-width: 960px) 25vw, 10vw" />
+        </button>
+      ))}
+    </div>
+  )}
+
+  {video && (
+    <figure class="vid">
+      <video src={video} controls playsinline preload="metadata" muted></video>
+      <figcaption>Video quay tại xưởng</figcaption>
+    </figure>
+  )}
+
+  <dialog class="lb" aria-label={`Ảnh ${title}`} data-lb>
+    <div class="lb-inner">
+      <img alt="" data-lb-img />
+      <p class="lb-count" aria-live="polite" data-lb-count></p>
+      <button class="lb-btn close" type="button" data-lb-close><Icon name="close" /><span class="sr-only">Đóng</span></button>
+      {many && <>
+        <button class="lb-btn prev" type="button" data-lb-prev><Icon name="prev" /><span class="sr-only">Ảnh trước</span></button>
+        <button class="lb-btn next" type="button" data-lb-next><Icon name="next" /><span class="sr-only">Ảnh sau</span></button>
+      </>}
+    </div>
+  </dialog>
+  <script type="application/json" data-list set:html={JSON.stringify(data)} />
+  <script type="application/json" data-title set:html={JSON.stringify(title)} />
+</div>
+
+<style>
+  button { padding: 0; border: 0; background: none; font: inherit; color: inherit; }
+
+  /* Khung ảnh chính cố định 4:3, ảnh nằm gọn bên trong để đổi ảnh không làm trang nhảy */
+  .stage { position: relative; }
+  .main { position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; background: var(--limestone); cursor: zoom-in; }
+  .main-img { width: 100%; height: 100%; object-fit: contain; display: block; transition: opacity 220ms var(--ease-out); }
+  .main-img.fading { opacity: 0; }
+
+  .lens {
+    --size: 240px;
+    position: absolute; left: 0; top: 0; width: var(--size); height: var(--size); border-radius: 50%;
+    pointer-events: none; opacity: 0; transform: scale(0.85);
+    transition: opacity 180ms var(--ease-out), transform 180ms var(--ease-out);
+    background-color: var(--limestone); background-repeat: no-repeat;
+    border: 2px solid var(--plaster);
+    box-shadow: 0 0 0 1px rgba(16, 33, 25, 0.35), 0 14px 34px -10px rgba(16, 33, 25, 0.6);
+  }
+  .main.lens-on { cursor: none; }
+  .main.lens-on .lens { opacity: 1; transform: scale(1); }
+
+  .zoom { position: absolute; right: 1rem; bottom: 1rem; display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.5rem 0.95rem; border-radius: 999px; background: rgba(251, 250, 246, 0.9); color: var(--ink); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); box-shadow: 0 0 0 1px rgba(21, 33, 27, 0.18), 0 10px 24px -14px rgba(16, 33, 25, 0.6); font-size: var(--step--1); opacity: 0; transition: opacity 200ms; }
+  .main:hover .zoom, .main:focus-visible .zoom { opacity: 1; }
+  .main.lens-on .zoom { opacity: 0.85; }
+  @media (hover: none) { .zoom { opacity: 1; } }
+
+  /* Mũi tên: nút tròn hai vòng viền (như phù điêu tròn), vùng bấm 56px */
+  .nav {
+    position: absolute; top: 50%; translate: 0 -50%; z-index: 2;
+    width: 3.5rem; height: 3.5rem; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+    background: rgba(251, 250, 246, 0.86); color: var(--ink);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 0 0 1px rgba(21, 33, 27, 0.18), 0 10px 24px -12px rgba(16, 33, 25, 0.6);
+    transition: background-color 250ms var(--ease-out), color 250ms var(--ease-out), transform 150ms;
+  }
+  .nav::before { content: ''; position: absolute; inset: 4px; border-radius: 50%; border: 1px solid rgba(21, 33, 27, 0.3); transition: border-color 250ms var(--ease-out), inset 250ms var(--ease-out); }
+  .nav:hover { background: var(--moss-900); color: var(--plaster); }
+  .nav:hover::before { border-color: rgba(156, 195, 173, 0.65); inset: 5px; }
+  .nav:active { transform: scale(0.95); }
+  .nav:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+  .chisel { width: 1.7rem; height: 0.75rem; fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; transition: transform 300ms var(--ease-out); }
+  .prev-img:hover .chisel { transform: translateX(-3px); }
+  .next-img:hover .chisel { transform: translateX(3px); }
+  .prev-img { left: 1rem; }
+  .next-img { right: 1rem; }
+
+  /* Số đếm: bia vòm nhỏ có viền trong, số theo font tiêu đề */
+  .counter {
+    position: absolute; left: 1rem; top: 1rem; z-index: 2; pointer-events: none;
+    display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+    min-width: 3.25rem; padding: 1.05rem 0.6rem 0.6rem;
+    border-radius: 999px 999px 2px 2px;
+    background: rgba(251, 250, 246, 0.9); color: var(--ink);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 0 0 1px rgba(21, 33, 27, 0.18), 0 10px 24px -14px rgba(16, 33, 25, 0.6);
+    font-family: var(--font-display); font-variant-numeric: tabular-nums lining-nums; line-height: 1;
+  }
+  .counter::before { content: ''; position: absolute; inset: 3px; border-radius: 999px 999px 1px 1px; border: 1px solid rgba(21, 33, 27, 0.25); }
+  .c-cur { font-size: 1.45rem; font-weight: 500; font-variation-settings: 'wdth' 70; }
+  .c-cur.tick { animation: c-tick 280ms var(--ease-out); }
+  @keyframes c-tick { from { opacity: 0; transform: translateY(4px); } }
+  .c-rule { width: 1.1rem; height: 1px; background: currentColor; opacity: 0.45; }
+  .c-tot { font-size: 0.8rem; font-variation-settings: 'wdth' 80; opacity: 0.6; }
+
+  .thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr)); gap: 0.5rem; margin-top: 0.5rem; }
+  .thumb { display: block; width: 100%; cursor: pointer; position: relative; outline-offset: 2px; }
+  .thumb :global(img) { transition: opacity 200ms; opacity: 0.6; }
+  .thumb:hover :global(img), .thumb[aria-current='true'] :global(img) { opacity: 1; }
+  .thumb[aria-current='true']::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 0 2px var(--jade-600); pointer-events: none; }
+
+  .vid { margin: 1.5rem 0 0; }
+  .vid video { width: 100%; max-height: 80vh; background: #000; display: block; }
+  .vid figcaption { font-size: var(--step--1); color: var(--fg-soft); margin-top: 0.5rem; }
+
+  .lb { padding: 0; border: 0; max-width: 100vw; max-height: 100vh; width: 100vw; height: 100vh; background: rgba(10, 20, 15, 0.96); color: var(--plaster); }
+  .lb::backdrop { background: rgba(10, 20, 15, 0.9); }
+  .lb[open] { animation: lb-in 220ms var(--ease-out); }
+  @keyframes lb-in { from { opacity: 0; } }
+  .lb-inner { position: relative; width: 100%; height: 100%; display: grid; place-items: center; padding: 4rem 4.5rem; }
+  .lb img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .lb-count { position: absolute; left: 1.25rem; top: 1.25rem; margin: 0; font-size: var(--step--1); color: #b9c9bf; }
+  .lb-btn { position: absolute; width: 3rem; height: 3rem; display: grid; place-items: center; color: var(--plaster); background: rgba(255, 255, 255, 0.06); cursor: pointer; transition: background-color 150ms; }
+  .lb-btn:hover { background: rgba(255, 255, 255, 0.16); }
+  .lb-btn :global(svg) { width: 1.5rem; height: 1.5rem; }
+  .close { top: 0.75rem; right: 0.75rem; }
+  .prev { left: 0.75rem; top: 50%; translate: 0 -50%; }
+  .next { right: 0.75rem; top: 50%; translate: 0 -50%; }
+  @media (max-width: 640px) {
+    .lb-inner { padding: 3.5rem 0.5rem 4.5rem; }
+    .prev, .next { top: auto; bottom: 0.75rem; translate: none; }
+    .nav { width: 3rem; height: 3rem; }
+    .chisel { width: 1.4rem; }
+    .prev-img { left: 0.5rem; }
+    .next-img { right: 0.5rem; }
+    .counter { left: 0.5rem; top: 0.5rem; min-width: 2.75rem; padding: 0.85rem 0.45rem 0.45rem; }
+    .c-cur { font-size: 1.2rem; }
+  }
+</style>
+
+<script>
+  type Item = { src: string; srcset: string; w: number; h: number; big: string };
+  document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((g) => {
+    const list: Item[] = JSON.parse(g.querySelector('[data-list]')!.textContent || '[]');
+    const title: string = JSON.parse(g.querySelector('[data-title]')!.textContent || '""');
+    const n = list.length;
+    const main = g.querySelector<HTMLButtonElement>('[data-main]')!;
+    const pic = g.querySelector<HTMLImageElement>('[data-main-img]')!;
+    const counter = g.querySelector<HTMLElement>('[data-counter]');
+    const thumbs = [...g.querySelectorAll<HTMLButtonElement>('[data-thumb]')];
+    const lens = g.querySelector<HTMLElement>('[data-lens]')!;
+    let cur = 0, lensSrc = '', swiped = false;
+
+    // ── Đổi ảnh chính
+    const setMain = (k: number) => {
+      cur = (k + n) % n;
+      const it = list[cur];
+      pic.classList.add('fading');
+      const swap = () => {
+        pic.srcset = it.srcset;
+        pic.src = it.src;
+        if (it.w) { pic.width = it.w; pic.height = it.h; }
+        pic.alt = `${title}, ảnh ${cur + 1}`;
+        const done = () => pic.classList.remove('fading');
+        if (pic.complete) requestAnimationFrame(done); else pic.addEventListener('load', done, { once: true });
+      };
+      setTimeout(swap, 120);
+      main.setAttribute('aria-label', `Xem toàn màn hình: ${title}, ảnh ${cur + 1} trên ${n}`);
+      if (counter) {
+        const c = counter.querySelector<HTMLElement>('[data-cur]');
+        if (c) { c.textContent = String(cur + 1).padStart(2, '0'); c.classList.remove('tick'); void c.offsetWidth; c.classList.add('tick'); }
+        const sr = counter.querySelector<HTMLElement>('[data-counter-sr]');
+        if (sr) sr.textContent = `Ảnh ${cur + 1} trên ${n}`;
+      }
+      thumbs.forEach((t, j) => { if (j === cur) t.setAttribute('aria-current', 'true'); else t.removeAttribute('aria-current'); });
+      thumbs[cur]?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      lensSrc = '';
+      // tải trước ảnh kế tiếp
+      if (n > 1) { const p = new Image(); p.srcset = list[(cur + 1) % n].srcset; p.sizes = pic.sizes; p.src = list[(cur + 1) % n].src; }
+    };
+    g.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((b) => b.addEventListener('click', () => setMain(cur + Number(b.dataset.step))));
+    thumbs.forEach((t) => t.addEventListener('click', () => setMain(Number(t.dataset.thumb))));
+
+    // Vuốt ảnh chính trên điện thoại
+    let sx = 0, sy = 0;
+    main.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+    main.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+      if (n > 1 && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { swiped = true; setMain(dx < 0 ? cur + 1 : cur - 1); }
+    });
+
+    // ── Xem toàn màn hình
+    const dlg = g.querySelector<HTMLDialogElement>('[data-lb]')!;
+    const lbImg = g.querySelector<HTMLImageElement>('[data-lb-img]')!;
+    const lbCount = g.querySelector<HTMLElement>('[data-lb-count]')!;
+    let li = 0;
+    const show = (k: number) => {
+      li = (k + n) % n;
+      lbImg.src = list[li].big;
+      lbImg.alt = `${title}, ảnh ${li + 1} trên ${n}`;
+      lbCount.textContent = `${li + 1} / ${n}`;
+      if (n > 1) { const p = new Image(); p.src = list[(li + 1) % n].big; }
+    };
+    main.addEventListener('click', () => {
+      if (swiped) { swiped = false; return; }
+      main.classList.remove('lens-on');
+      show(cur);
+      dlg.showModal();
+    });
+    g.querySelector('[data-lb-close]')?.addEventListener('click', () => dlg.close());
+    g.querySelector('[data-lb-prev]')?.addEventListener('click', () => show(li - 1));
+    g.querySelector('[data-lb-next]')?.addEventListener('click', () => show(li + 1));
+    dlg.addEventListener('click', (e) => { if (e.target === dlg || (e.target as HTMLElement).classList.contains('lb-inner')) dlg.close(); });
+    dlg.addEventListener('close', () => { if (li !== cur) setMain(li); main.focus(); });
+    let lx = 0;
+    dlg.addEventListener('touchstart', (e) => { lx = e.touches[0].clientX; }, { passive: true });
+    dlg.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - lx;
+      if (Math.abs(dx) > 50) show(dx < 0 ? li + 1 : li - 1);
+    });
+
+    // Phím mũi tên: trong toàn màn hình thì chuyển ảnh ở đó; ngoài trang thì chuyển ảnh chính khi đang focus vào thư viện
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      const d = e.key === 'ArrowLeft' ? -1 : 1;
+      if (dlg.open) { show(li + d); return; }
+      if (n > 1 && g.contains(document.activeElement)) { e.preventDefault(); setMain(cur + d); }
+    });
+
+    // ── Kính lúp (chỉ với chuột)
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      const ZOOM = 2.5;
+      const label = g.querySelector<HTMLElement>('[data-zoom-label]');
+      if (label) label.textContent = 'Bấm để xem toàn màn hình';
+      const loadLens = () => {
+        if (lensSrc === list[cur].big) return;
+        lensSrc = list[cur].big;
+        lens.style.backgroundImage = `url("${pic.currentSrc || pic.src}")`;
+        const want = lensSrc;
+        const hi = new Image();
+        hi.onload = () => { if (lensSrc === want) lens.style.backgroundImage = `url("${hi.src}")`; };
+        hi.src = want;
+      };
+      main.addEventListener('pointermove', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        loadLens();
+        // Ảnh nằm "contain" trong khung 4:3: tính vùng ảnh thật để kính lúp khớp đúng điểm
+        const m = main.getBoundingClientRect();
+        const nw = pic.naturalWidth || list[cur].w, nh = pic.naturalHeight || list[cur].h;
+        if (!nw || !nh) return;
+        const sc = Math.min(m.width / nw, m.height / nh);
+        const dw = nw * sc, dh = nh * sc, ox = (m.width - dw) / 2, oy = (m.height - dh) / 2;
+        const x = e.clientX - m.left - ox, y = e.clientY - m.top - oy;
+        if (x < 0 || y < 0 || x > dw || y > dh) { main.classList.remove('lens-on'); return; }
+        const s = lens.offsetWidth / 2;
+        lens.style.left = `${e.clientX - m.left - s}px`;
+        lens.style.top = `${e.clientY - m.top - s}px`;
+        lens.style.backgroundSize = `${dw * ZOOM}px ${dh * ZOOM}px`;
+        lens.style.backgroundPosition = `${-(x * ZOOM - s)}px ${-(y * ZOOM - s)}px`;
+        main.classList.add('lens-on');
+      });
+      main.addEventListener('pointerleave', () => main.classList.remove('lens-on'));
+    }
+  });
+</script>

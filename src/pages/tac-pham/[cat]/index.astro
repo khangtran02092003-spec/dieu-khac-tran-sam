@@ -1,0 +1,91 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import WorkCard from '../../../components/WorkCard.astro';
+import Picture from '../../../components/Picture.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import { categories, type Category } from '../../../data/categories';
+
+export async function getStaticPaths() {
+  return categories.map((c) => ({ params: { cat: c.slug }, props: { cat: c } }));
+}
+const { cat } = Astro.props as { cat: Category };
+const works = (await getCollection('tac-pham', (w) => w.data.category === cat.slug)).sort((a, b) => a.data.order - b.data.order);
+const others = categories.filter((c) => c.slug !== cat.slug);
+const faqLd = cat.faq.length ? {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: cat.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+} : undefined;
+---
+<Base title={cat.name} description={`${cat.name}: ${cat.short} ${cat.intro[0]}`} image={cat.cover}>
+  {faqLd && <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqLd)} />}
+  <PageHead title={cat.name} lede={cat.short} crumbs={[{ href: '/tac-pham/', label: 'Tác phẩm' }, { href: `/tac-pham/${cat.slug}/`, label: cat.name }]} />
+
+  <section class="wrap grid12 about">
+    <div class="a-img"><Picture src={cat.cover} alt={`${cat.name}, tác phẩm của xưởng`} ratio="4 / 3" sizes="(max-width: 900px) 100vw, 55vw" loading="eager" /></div>
+    <div class="a-text">
+      <div class="prose">{cat.intro.map((p) => <p>{p}</p>)}</div>
+      <h2 class="fits-h">Thường dùng cho</h2>
+      <ul class="fits">{cat.fits.map((f) => <li>{f}</li>)}</ul>
+      <a class="btn btn-primary" href={`/lien-he/?loai=${cat.slug}`}>Hỏi giá {cat.name.toLowerCase()}</a>
+    </div>
+  </section>
+
+  <section class="wrap works" aria-labelledby="w-h">
+    <h2 id="w-h">{works.length} tác phẩm đã làm</h2>
+    <ul class="grid">
+      {works.map((w, i) => <li><WorkCard work={w} showCategory={false} ratio={['4 / 5', '1 / 1', '3 / 4'][i % 3]} /></li>)}
+    </ul>
+  </section>
+
+  {cat.faq.length > 0 && (
+    <section class="wrap faq" aria-labelledby="faq-h">
+      <h2 id="faq-h">Câu hỏi thường gặp</h2>
+      <div class="qa">
+        {cat.faq.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="wrap more" aria-labelledby="more-h">
+    <h2 id="more-h" class="more-h">Các dòng tác phẩm khác</h2>
+    <ul>{others.map((c) => <li><a href={`/tac-pham/${c.slug}/`}>{c.name}</a></li>)}</ul>
+  </section>
+
+  <CtaBand preset={cat.slug} />
+</Base>
+
+<style>
+  .about { row-gap: 2.5rem; }
+  .a-img { grid-column: 1 / span 7; }
+  .a-text { grid-column: 9 / span 4; }
+  .fits-h { font-size: var(--step-1); font-family: var(--font-body); font-weight: 600; font-variation-settings: normal; margin: 2rem 0 0.75rem; }
+  .fits { list-style: none; margin: 0 0 2rem; padding: 0; border-top: 1px solid var(--rule); }
+  .fits li { padding: 0.65rem 0; border-bottom: 1px solid var(--rule); color: var(--fg-soft); }
+  .works { padding-top: var(--section); }
+  .works h2 { margin-bottom: clamp(2rem, 1.5rem + 2vw, 3.5rem); }
+  .grid { list-style: none; margin: 0; padding: 0; columns: 3 18rem; column-gap: var(--gutter); }
+  .grid li { break-inside: avoid; margin-bottom: clamp(2rem, 1.5rem + 1.5vw, 3rem); }
+  .faq { padding-block: var(--section) 0; display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 2rem var(--gutter); }
+  .faq h2 { font-size: var(--step-3); }
+  .qa { border-top: 1px solid var(--rule); }
+  details { border-bottom: 1px solid var(--rule); }
+  summary { cursor: pointer; padding: 1.1rem 2.5rem 1.1rem 0; font-weight: 500; font-size: var(--step-1); list-style: none; position: relative; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: ''; position: absolute; right: 0.5rem; top: 50%; width: 0.7rem; height: 0.7rem; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translateY(-70%) rotate(45deg); transition: transform 200ms var(--ease-out); }
+  details[open] summary::after { transform: translateY(-30%) rotate(225deg); }
+  details p { color: var(--fg-soft); max-width: 62ch; padding-bottom: 1rem; }
+  .more { padding-block: var(--section); }
+  .more-h { font-size: var(--step-2); margin-bottom: 1.25rem; }
+  .more ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.75rem; }
+  .more a { font-family: var(--font-display); font-variation-settings: 'wdth' 80; font-size: var(--step-2); text-decoration: none; }
+  .more a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
+  @media (max-width: 900px) { .a-img, .a-text { grid-column: 1 / -1; } .faq { grid-template-columns: 1fr; } }
+</style>

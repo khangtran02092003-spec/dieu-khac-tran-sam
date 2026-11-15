@@ -1,0 +1,36 @@
+---
+import { resolveImage } from '../lib/img';
+
+interface Props {
+  src: string;
+  alt: string;
+  sizes?: string;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  fit?: 'cover' | 'contain';
+  ratio?: string; // vd "4 / 5" — cố định khung, ảnh cover bên trong
+}
+const { src, alt, sizes = '100vw', class: cls, loading = 'lazy', fetchpriority, fit = 'cover', ratio } = Astro.props;
+const r = resolveImage(src);
+---
+<span class:list={['pic', cls]} style={`--pic-bg:${r.color ?? 'var(--limestone)'};${ratio ? `aspect-ratio:${ratio};` : ''}`} data-fit={fit} data-framed={ratio ? '' : undefined}>
+  <img
+    src={r.src}
+    srcset={r.srcset}
+    sizes={r.srcset ? sizes : undefined}
+    width={r.width}
+    height={r.height}
+    alt={alt}
+    loading={loading}
+    decoding="async"
+    fetchpriority={fetchpriority}
+  />
+</span>
+
+<style>
+  .pic { display: block; background: var(--pic-bg); overflow: hidden; }
+  .pic img { display: block; width: 100%; height: auto; }
+  .pic[data-framed] img { height: 100%; object-fit: cover; }
+  .pic[data-framed][data-fit='contain'] img { object-fit: contain; }
+</style>

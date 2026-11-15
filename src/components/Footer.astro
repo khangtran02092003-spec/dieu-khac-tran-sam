@@ -1,0 +1,70 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import site from '../data/site.json';
+import { categories } from '../data/categories';
+const year = new Date().getFullYear();
+const socials = [
+  { href: site.facebook, label: 'Facebook' },
+  { href: site.youtube, label: 'YouTube' },
+  { href: site.tiktok, label: 'TikTok' },
+].filter((s) => s.href);
+---
+<footer class="on-dark footer">
+  <div class="wrap">
+    <div class="top grid12">
+      <div class="brand">
+        <Logo />
+        <p class="tag">{site.tagline}. Từ bản phác thảo đến khi lắp đặt xong tại công trình.</p>
+        <a class="btn btn-primary" href="/lien-he/">Gửi yêu cầu báo giá</a>
+      </div>
+      <div class="col">
+        <h2 class="h">Dòng tác phẩm</h2>
+        <ul>{categories.map((c) => <li><a href={`/tac-pham/${c.slug}/`}>{c.name}</a></li>)}</ul>
+      </div>
+      <div class="col">
+        <h2 class="h">Xưởng</h2>
+        <ul>
+          <li><a href="/gioi-thieu/">Về xưởng</a></li>
+          <li><a href="/quy-trinh/">Quy trình làm việc</a></li>
+          <li><a href="/tin-tuc/">Tin tức và kiến thức</a></li>
+          <li><a href="/lien-he/">Liên hệ</a></li>
+        </ul>
+      </div>
+      <address class="col contact">
+        <h2 class="h">Liên hệ</h2>
+        <p><Icon name="phone" />{site.phoneHref ? <a href={`tel:${site.phoneHref}`}>{site.phone}</a> : <span>{site.phone}</span>}</p>
+        <p><Icon name="mail" />{site.email.includes('@') && !site.email.startsWith('[') ? <a href={`mailto:${site.email}`}>{site.email}</a> : <span>{site.email}</span>}</p>
+        <p><Icon name="pin" /><span>{site.address}</span></p>
+        <p><Icon name="clock" /><span>{site.hours}</span></p>
+        {socials.length > 0 && <p class="socials">{socials.map((s) => <a href={s.href} rel="noopener" target="_blank">{s.label}</a>)}</p>}
+      </address>
+    </div>
+    <p class="carve engraved" aria-hidden="true">Trần Sâm</p>
+    <div class="bottom">
+      <span>© {year} {site.name}</span>
+      <span>Ảnh trên website là tác phẩm do xưởng thực hiện.</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer { padding-block: clamp(4rem, 3rem + 4vw, 7rem) 2rem; }
+  .top { row-gap: 3rem; }
+  .brand { grid-column: span 4; }
+  .col { grid-column: span 2; }
+  .contact { grid-column: span 4; font-style: normal; }
+  .tag { color: var(--fg-soft); margin: 1.5rem 0 1.75rem; max-width: 30ch; }
+  .h { font-family: var(--font-body); font-size: var(--step--1); font-weight: 500; color: var(--verdigris-300); margin-bottom: 1rem; font-variation-settings: normal; letter-spacing: 0; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { margin-bottom: 0.55rem; }
+  li a, .contact a { text-decoration: none; color: var(--plaster); opacity: 0.85; }
+  li a:hover, .contact a:hover { opacity: 1; text-decoration: underline; }
+  .contact p { display: flex; gap: 0.7rem; align-items: flex-start; margin-bottom: 0.8rem; color: #cfdcd4; }
+  .contact :global(svg) { width: 1.15rem; height: 1.15rem; flex: none; margin-top: 0.2rem; color: var(--verdigris-300); }
+  .socials { gap: 1.25rem !important; }
+  /* Tên xưởng khắc chìm vào nền đá rêu, như bia đá cuối trang */
+  .carve { margin: 4rem 0 0; font-family: var(--font-display); font-variation-settings: 'wdth' 62.5; font-weight: 600; font-size: clamp(4.5rem, 1rem + 16vw, 15rem); line-height: 0.85; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; user-select: none; }
+  .bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--rule-dark); font-size: var(--step--1); color: #9fb3a7; }
+  @media (max-width: 1000px) { .brand, .contact { grid-column: span 12; } .col { grid-column: span 6; } }
+</style>
