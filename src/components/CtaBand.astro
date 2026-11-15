@@ -1,26 +1,118 @@
 ---
+// Khối chốt khách cuối trang: một "khám vòm" chiếu đèn xiên bên phải (cùng ngôn ngữ với hero),
+// bên trái là lời mời, ba bước sẽ diễn ra sau khi gửi, và các đường liên hệ trực tiếp.
 import site from '../data/site.json';
-interface Props { title?: string; text?: string; preset?: string }
-const { title = 'Có một bức tường, một ý tưởng, hay chỉ một tấm ảnh mẫu?', text = 'Gửi cho xưởng. Bạn nhận lại phác thảo và báo giá, không mất phí tư vấn.', preset } = Astro.props;
+import Picture from './Picture.astro';
+import Icon from './Icon.astro';
+import { phones } from '../lib/contact';
+interface Props { title?: string; text?: string; preset?: string; image?: string; imageAlt?: string }
+const {
+  title,
+  text = 'Gửi cho xưởng ảnh không gian, kích thước hoặc ảnh mẫu bạn thích. Xưởng tư vấn phương án, gửi bản vẽ và báo giá để bạn duyệt trước khi sản xuất.',
+  preset,
+  image = 'phu-dieu-decor-31',
+  imageAlt = 'Phù điêu hoa sen phủ nhũ vàng',
+} = Astro.props;
 const href = preset ? `/lien-he/?loai=${preset}` : '/lien-he/';
+const zalo = site.zalo ? `https://zalo.me/${site.zalo.replace(/\D/g, '')}` : '';
+const steps = ['Gửi ảnh và ý tưởng', 'Xưởng gọi lại tư vấn', 'Nhận bản vẽ và báo giá'];
 ---
-<section class="on-dark band">
+<section class="on-dark cta-band" aria-labelledby="cta-h">
+  <div class="glow" aria-hidden="true"></div>
   <div class="wrap inner">
-    <h2>{title}</h2>
-    <div class="side">
-      <p>{text}</p>
-      <div class="btns">
-        <a class="btn btn-primary" href={href}>Gửi yêu cầu báo giá</a>
-        {site.zalo && <a class="btn btn-ghost" href={`https://zalo.me/${site.zalo.replace(/\D/g, '')}`} target="_blank" rel="noopener">Nhắn Zalo</a>}
+    <div class="copy">
+      <span class="kicker"><span class="dot" aria-hidden="true"></span>Tư vấn và phác thảo miễn phí</span>
+      <h2 id="cta-h">
+        {title ? title : <Fragment>Có một bức tường, một ý tưởng, hay chỉ <em>một tấm ảnh mẫu?</em></Fragment>}
+      </h2>
+      <p class="text">{text}</p>
+
+      <ol class="steps" aria-label="Sau khi bạn gửi yêu cầu">
+        {steps.map((s, i) => <li><span class="n" aria-hidden="true">{i + 1}</span>{s}</li>)}
+      </ol>
+
+      <div class="actions">
+        <a class="btn go" href={href}>
+          Gửi yêu cầu báo giá
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </a>
+        {zalo && <a class="btn btn-ghost" href={zalo} target="_blank" rel="noopener"><Icon name="chat" />Nhắn Zalo</a>}
       </div>
+
+      {phones.length > 0 && (
+        <div class="call">
+          <span class="call-k">Hoặc gọi thẳng cho xưởng</span>
+          <ul>
+            {phones.map((p) => <li><a href={`tel:${p.href}`}><Icon name="phone" />{p.label}</a></li>)}
+          </ul>
+        </div>
+      )}
     </div>
+
+    <div class="art" aria-hidden="true">
+      <div class="frame">
+      <div class="niche">
+        <Picture src={image} alt="" ratio="3 / 4" sizes="(max-width: 980px) 0px, 34vw" />
+          <span class="lit"></span>
+        </div>
+        <span class="seal"><img src="/brand/emblem-160.webp" width="160" height="136" alt="" loading="lazy" decoding="async" /></span>
+      </div>
+      <p class="motto">{site.motto}</p>
+    </div>
+    <span class="sr-only">{imageAlt}</span>
   </div>
 </section>
 <style>
-  .band { padding-block: clamp(4rem, 3rem + 5vw, 8rem); }
-  .inner { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 2rem var(--gutter); align-items: end; }
-  h2 { max-width: 16ch; }
-  p { color: var(--fg-soft); max-width: 38ch; }
-  .btns { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
-  @media (max-width: 860px) { .inner { grid-template-columns: 1fr; } }
+  .cta-band { position: relative; overflow: hidden; isolation: isolate; padding-block: clamp(4.5rem, 3rem + 6vw, 9rem); }
+  /* quầng đèn dầu ấm phía sau khám vòm */
+  .glow { position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse 45% 70% at 78% 45%, rgba(221, 176, 58, 0.16), transparent 70%), radial-gradient(ellipse 30% 40% at 10% 100%, rgba(61, 127, 95, 0.25), transparent 70%); }
+  .inner { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 3rem clamp(2rem, 1rem + 5vw, 7rem); align-items: center; }
+
+  .kicker { display: inline-flex; align-items: center; gap: 0.6rem; margin-bottom: 1.4rem; color: var(--gold-bright); font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; }
+  .dot { width: 0.5rem; height: 0.5rem; transform: rotate(45deg); background: var(--gold-bright); }
+  h2 { max-width: 17ch; font-size: clamp(2.4rem, 1.5rem + 3.4vw, 4.6rem); line-height: 1.02; }
+  h2 em { font-style: italic; color: var(--gold-bright); }
+  .text { margin-top: 1.5rem; color: var(--fg-soft); max-width: 50ch; }
+
+  .steps { list-style: none; margin: 2rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.6rem 0; counter-reset: s; }
+  .steps li { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.95rem; color: var(--plaster); }
+  .steps li + li::before { content: ''; width: 2rem; height: 1px; margin: 0 0.9rem 0 0.3rem; background: linear-gradient(90deg, transparent, rgba(221, 176, 58, 0.7)); }
+  .n { display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 50%; border: 1px solid rgba(221, 176, 58, 0.6); color: var(--gold-bright); font-family: var(--font-display); font-size: 0.95rem; }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.5rem; }
+  /* nút chính: vàng đồng, nổi bật nhất trang */
+  .go { min-height: 3.5rem; padding: 0.9rem 1.6rem; gap: 0.75rem; font-size: 1.05rem; font-weight: 600; background: var(--gold-bright); color: var(--moss-950); border-color: var(--gold-bright); box-shadow: 0 10px 30px -10px rgba(221, 176, 58, 0.55); transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out), background-color 200ms; }
+  .go svg { width: 1.2rem; height: 1.2rem; fill: none; stroke: currentColor; stroke-width: 2; transition: transform 200ms var(--ease-out); }
+  .go:hover { background: #e8c05a; transform: translateY(-2px); box-shadow: 0 16px 36px -12px rgba(221, 176, 58, 0.7); }
+  .go:hover svg { transform: translateX(3px); }
+  .go:focus-visible { outline: 2px solid var(--plaster); outline-offset: 3px; }
+
+  .call { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--rule-dark); display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; }
+  .call-k { font-size: var(--step--1); color: var(--fg-soft); }
+  .call ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+  .call a { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 44px; color: var(--plaster); text-decoration: none; font-family: var(--font-display); font-variation-settings: 'wdth' 80; font-size: 1.45rem; letter-spacing: 0.01em; }
+  .call a :global(.icon) { width: 1.1rem; height: 1.1rem; color: var(--gold-bright); }
+  .call a:hover { color: var(--gold-bright); }
+
+  /* khám vòm chiếu đèn xiên */
+  .art { position: relative; justify-self: center; width: min(100%, 26rem); }
+  .frame { position: relative; }
+  .niche { position: relative; border-radius: 999px 999px 0 0; overflow: hidden; box-shadow: 0 0 0 1px rgba(221, 176, 58, 0.55), 0 0 0 10px rgba(251, 250, 246, 0.03), 0 0 0 11px rgba(221, 176, 58, 0.25), 0 40px 80px -30px rgba(0, 0, 0, 0.7); }
+  .niche :global(img) { filter: brightness(0.82) contrast(1.08) saturate(0.95); transition: transform 1.2s var(--ease-out), filter 1.2s var(--ease-out); }
+  .cta-band:hover .niche :global(img) { transform: scale(1.04); filter: brightness(0.95) contrast(1.1); }
+  .lit { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 70% 55% at 30% 25%, rgba(255, 214, 140, 0.28), transparent 65%), linear-gradient(to top, rgba(16, 33, 25, 0.75), transparent 45%); mix-blend-mode: normal; }
+  .seal { position: absolute; left: 50%; bottom: -2.1rem; z-index: 1; transform: translateX(-50%); width: 4.25rem; height: 4.25rem; border-radius: 50%; display: grid; place-items: center; background: var(--plaster); box-shadow: 0 0 0 1px rgba(221, 176, 58, 0.8), 0 0 0 6px var(--moss-950), 0 0 0 7px rgba(221, 176, 58, 0.35); }
+  .seal img { width: 72%; height: auto; }
+  .motto { margin: 3.25rem 0 0; text-align: center; font-family: var(--font-display); font-style: italic; font-variation-settings: 'wdth' 85; font-size: 1.1rem; color: var(--gold-bright); letter-spacing: 0.02em; }
+
+  @media (max-width: 980px) {
+    .inner { grid-template-columns: 1fr; }
+    .art { display: none; }
+  }
+  @media (max-width: 520px) {
+    .steps { flex-direction: column; gap: 0.6rem; }
+    .steps li + li::before { display: none; }
+    .go { width: 100%; justify-content: center; }
+  }
+  @media (prefers-reduced-motion: reduce) { .go, .go svg, .niche :global(img) { transition: none; } .go:hover { transform: none; } }
 </style>

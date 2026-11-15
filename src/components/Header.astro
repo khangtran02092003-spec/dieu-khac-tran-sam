@@ -7,13 +7,14 @@ interface Props { overlay?: boolean }
 const { overlay = false } = Astro.props;
 const path = Astro.url.pathname;
 const nav = [
+  { href: '/', label: 'Trang chủ' },
   { href: '/tac-pham/', label: 'Tác phẩm' },
   { href: '/dich-vu/', label: 'Dịch vụ' },
   { href: '/quy-trinh/', label: 'Quy trình' },
   { href: '/tin-tuc/', label: 'Tin tức' },
   { href: '/gioi-thieu/', label: 'Về xưởng' },
 ];
-const active = (href: string) => path.startsWith(href);
+const active = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
 const hasPhone = !!site.phoneHref;
 ---
 <header class:list={['site-header', { overlay }]} data-header>
@@ -65,8 +66,9 @@ const hasPhone = !!site.phoneHref;
   .mobile-nav ul { list-style: none; margin: 0; padding-block: 0.5rem 1.5rem; }
   .mobile-nav a { display: block; padding: 0.9rem 0; font-family: var(--font-display); font-variation-settings: 'wdth' 80; font-size: 1.75rem; text-decoration: none; border-bottom: 1px solid var(--rule); }
 
-  @media (max-width: 1080px) { .tel { display: none; } }
-  @media (max-width: 900px) {
+  @media (max-width: 1240px) { .tel { display: none; } }
+  @media (max-width: 1120px) { .nav a { padding-inline: 0.55rem; } .nav a::after { left: 0.55rem; right: 0.55rem; } .bar { gap: 1.25rem; } }
+  @media (max-width: 980px) {
     .nav { display: none; }
     .actions { margin-left: auto; gap: 0.5rem; }
     .menu-btn { display: inline-flex; }
