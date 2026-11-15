@@ -43,7 +43,8 @@ const socials = [
         {socials.length > 0 && <p class="socials">{socials.map((s) => <a href={s.href} rel="noopener" target="_blank">{s.label}</a>)}</p>}
       </address>
     </div>
-    <p class="carve engraved" aria-hidden="true">Trần Sâm</p>
+    <!-- Dấu huyền của "ầ" được đặt tay sau dấu mũ (font gốc đặt dấu huyền bên trái) -->
+    <p class="carve engraved" aria-hidden="true">Tr<span class="ah">â<span class="gv"></span></span>n Sâm</p>
     <div class="bottom">
       <span>© {year} {site.name} · {site.company}</span>
       <span>Ảnh trên website là tác phẩm do xưởng thực hiện.</span>
@@ -70,7 +71,10 @@ const socials = [
   .co { color: var(--plaster) !important; font-weight: 600; font-size: 0.9rem; letter-spacing: 0.03em; }
   .socials { gap: 1.25rem !important; }
   /* Tên xưởng khắc chìm vào nền đá rêu, như bia đá cuối trang */
-  .carve { margin: 4rem 0 0; font-family: var(--font-display); font-variation-settings: 'wdth' 62.5; font-weight: 600; font-size: clamp(4.5rem, 1rem + 16vw, 15rem); line-height: 0.85; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; user-select: none; }
+  .carve { margin: 4rem 0 0; padding-top: 0.14em; font-family: var(--font-display); font-variation-settings: 'wdth' 62.5; font-weight: 600; font-size: clamp(4.5rem, 1rem + 16vw, 15rem); line-height: 0.85; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; user-select: none; }
+  .ah { position: relative; display: inline-block; }
+  /* dấu huyền vẽ bằng một nét vát, cùng màu và bóng khắc chìm với chữ */
+  .gv { position: absolute; left: 82%; top: -0.1em; width: 0.07em; height: 0.19em; background: currentColor; border-radius: 0.04em 0.04em 0.02em 0.02em; transform: rotate(-38deg); transform-origin: bottom center; box-shadow: -1px -1px 0 rgba(0, 0, 0, 0.55), 1px 1px 0 rgba(219, 233, 224, 0.07); }
   .bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--rule-dark); font-size: var(--step--1); color: #9fb3a7; }
   @media (max-width: 1000px) { .brand, .contact { grid-column: span 12; } .col { grid-column: span 6; } }
 </style>
