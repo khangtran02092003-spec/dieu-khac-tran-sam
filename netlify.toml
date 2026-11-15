@@ -3,7 +3,8 @@
   publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "22"
+  # Astro 7 cần Node >= 22.23.4
+  NODE_VERSION = "24"
 
 [[headers]]
   for = "/images/*"
