@@ -17,7 +17,7 @@ local_backend: true
 locale: vi
 site_url: https://dieukhactransam.vn
 display_url: https://dieukhactransam.vn
-logo_url: /favicon.svg
+logo_url: /brand/icon-512.png
 
 media_folder: public/uploads
 public_folder: /uploads
@@ -94,14 +94,19 @@ collections:
         file: src/data/site.json
         fields:
           - { label: Tên xưởng, name: name, widget: string }
-          - { label: Khẩu hiệu, name: tagline, widget: string }
+          - { label: Tên công ty, name: company, widget: string, required: false }
+          - { label: Mô tả ngắn (tiêu đề Google), name: tagline, widget: string }
+          - { label: Phương châm, name: motto, widget: string, required: false, hint: 'Hai vế cách nhau bằng dấu phẩy, ví dụ: Chạm bằng tâm, khắc bằng tín' }
           - { label: Số điện thoại (hiển thị), name: phone, widget: string, hint: 'Ví dụ: 0912 345 678' }
           - { label: Số điện thoại (để bấm gọi), name: phoneHref, widget: string, required: false, hint: 'Chỉ chữ số, ví dụ 0912345678. Để trống thì ẩn nút gọi.' }
+          - { label: Số điện thoại 2 (hiển thị), name: phone2, widget: string, required: false }
+          - { label: Số điện thoại 2 (để bấm gọi), name: phone2Href, widget: string, required: false, hint: 'Chỉ chữ số.' }
           - { label: Số Zalo, name: zalo, widget: string, required: false, hint: 'Để trống thì ẩn nút Zalo.' }
           - { label: Email, name: email, widget: string }
           - { label: Địa chỉ xưởng, name: address, widget: string }
           - { label: Giờ làm việc, name: hours, widget: string }
-          - { label: Link nhúng Google Maps, name: mapEmbed, widget: string, required: false, hint: 'Trên Google Maps: Chia sẻ > Nhúng bản đồ, chỉ dán phần đường dẫn trong src="..."' }
+          - { label: Địa chỉ tìm trên Google Maps, name: mapQuery, widget: string, required: false, hint: 'Dùng cho bản đồ và nút Chỉ đường. Để trống thì dùng Địa chỉ xưởng.' }
+          - { label: Link nhúng Google Maps, name: mapEmbed, widget: string, required: false, hint: 'Không bắt buộc. Nếu ghim trên bản đồ lệch: Google Maps > Chia sẻ > Nhúng bản đồ, dán phần đường dẫn trong src="..."' }
           - { label: Facebook, name: facebook, widget: string, required: false }
           - { label: YouTube, name: youtube, widget: string, required: false }
           - { label: TikTok, name: tiktok, widget: string, required: false }

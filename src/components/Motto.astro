@@ -1,0 +1,26 @@
+---
+// Lời cam kết khép lại quy trình: huy hiệu + khẩu hiệu khắc như dòng chữ trên bia, rồi đoạn cam kết.
+import site from '../data/site.json';
+import { processOutro } from '../data/categories';
+interface Props { class?: string }
+const { class: cls } = Astro.props;
+const [a, b] = site.motto.split(',').map((s) => s.trim());
+---
+<div class:list={['motto', cls]}>
+  <span class="seal" aria-hidden="true"><img src="/brand/emblem-160.webp" width="160" height="136" alt="" loading="lazy" decoding="async" /></span>
+  <p class="name">{site.name}</p>
+  <p class="line"><span>{a}</span><span class="sep" aria-hidden="true"></span><span>{b}</span></p>
+  <p class="text">{processOutro}</p>
+</div>
+<style>
+  .motto { text-align: center; max-width: 46rem; margin-inline: auto; display: grid; justify-items: center; gap: 0.9rem; }
+  .seal { width: 3.6rem; height: 3.6rem; border-radius: 50%; display: grid; place-items: center; background: var(--plaster); box-shadow: 0 0 0 1px rgba(165, 119, 15, 0.7), 0 0 0 5px rgba(165, 119, 15, 0.08), 2px 4px 10px rgba(0, 0, 0, 0.18); }
+  .seal img { width: 72%; height: auto; }
+  .name { margin: 0.4rem 0 0; font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-soft); }
+  .line { margin: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.4rem 1.1rem; font-family: var(--font-display); font-variation-settings: 'wdth' 72; font-weight: 500; font-size: clamp(1.7rem, 1.1rem + 2.4vw, 2.9rem); line-height: 1.1; text-transform: uppercase; letter-spacing: 0.02em; }
+  .line span:first-child { color: var(--jade-700, #245740); }
+  .line span:last-child { color: var(--gold); }
+  .sep { width: 0.45em; height: 0.45em; transform: rotate(45deg); border: 1.5px solid var(--gold); flex: none; }
+  .text { margin: 0.4rem 0 0; color: var(--fg-soft); max-width: 60ch; }
+  :global(.on-dark) .line span:first-child { color: var(--verdigris-300); }
+</style>

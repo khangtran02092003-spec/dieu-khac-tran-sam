@@ -2,6 +2,7 @@
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
 import site from '../data/site.json';
+import { phones, filled, mapLink } from '../lib/contact';
 import { categories } from '../data/categories';
 const year = new Date().getFullYear();
 const socials = [
@@ -16,6 +17,7 @@ const socials = [
       <div class="brand">
         <Logo />
         <p class="tag">{site.tagline}. Từ bản phác thảo đến khi lắp đặt xong tại công trình.</p>
+        <p class="motto">{site.motto}</p>
         <a class="btn btn-primary" href="/lien-he/">Gửi yêu cầu báo giá</a>
       </div>
       <div class="col">
@@ -33,16 +35,17 @@ const socials = [
       </div>
       <address class="col contact">
         <h2 class="h">Liên hệ</h2>
-        <p><Icon name="phone" />{site.phoneHref ? <a href={`tel:${site.phoneHref}`}>{site.phone}</a> : <span>{site.phone}</span>}</p>
-        <p><Icon name="mail" />{site.email.includes('@') && !site.email.startsWith('[') ? <a href={`mailto:${site.email}`}>{site.email}</a> : <span>{site.email}</span>}</p>
-        <p><Icon name="pin" /><span>{site.address}</span></p>
+        <p class="co">{site.company}</p>
+        <p><Icon name="phone" /><span class="stack">{phones.length ? phones.map((p) => <a href={`tel:${p.href}`}>{p.label}</a>) : site.phone}</span></p>
+        <p><Icon name="mail" />{filled(site.email) ? <a href={`mailto:${site.email}`}>{site.email}</a> : <span>{site.email}</span>}</p>
+        <p><Icon name="pin" /><a href={mapLink} target="_blank" rel="noopener">{site.address}<span class="sr-only"> (mở Google Maps)</span></a></p>
         <p><Icon name="clock" /><span>{site.hours}</span></p>
         {socials.length > 0 && <p class="socials">{socials.map((s) => <a href={s.href} rel="noopener" target="_blank">{s.label}</a>)}</p>}
       </address>
     </div>
     <p class="carve engraved" aria-hidden="true">Trần Sâm</p>
     <div class="bottom">
-      <span>© {year} {site.name}</span>
+      <span>© {year} {site.name} · {site.company}</span>
       <span>Ảnh trên website là tác phẩm do xưởng thực hiện.</span>
     </div>
   </div>
@@ -55,6 +58,7 @@ const socials = [
   .col { grid-column: span 2; }
   .contact { grid-column: span 4; font-style: normal; }
   .tag { color: var(--fg-soft); margin: 1.5rem 0 1.75rem; max-width: 30ch; }
+  .motto { margin: -0.5rem 0 1.75rem; font-family: var(--font-display); font-style: italic; font-variation-settings: 'wdth' 85; font-size: 1.15rem; color: var(--gold); }
   .h { font-family: var(--font-body); font-size: var(--step--1); font-weight: 500; color: var(--verdigris-300); margin-bottom: 1rem; font-variation-settings: normal; letter-spacing: 0; }
   ul { list-style: none; margin: 0; padding: 0; }
   li { margin-bottom: 0.55rem; }
@@ -62,6 +66,8 @@ const socials = [
   li a:hover, .contact a:hover { opacity: 1; text-decoration: underline; }
   .contact p { display: flex; gap: 0.7rem; align-items: flex-start; margin-bottom: 0.8rem; color: #cfdcd4; }
   .contact :global(svg) { width: 1.15rem; height: 1.15rem; flex: none; margin-top: 0.2rem; color: var(--verdigris-300); }
+  .stack { display: flex; flex-direction: column; gap: 0.3rem; }
+  .co { color: var(--plaster) !important; font-weight: 600; font-size: 0.9rem; letter-spacing: 0.03em; }
   .socials { gap: 1.25rem !important; }
   /* Tên xưởng khắc chìm vào nền đá rêu, như bia đá cuối trang */
   .carve { margin: 4rem 0 0; font-family: var(--font-display); font-variation-settings: 'wdth' 62.5; font-weight: 600; font-size: clamp(4.5rem, 1rem + 16vw, 15rem); line-height: 0.85; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; user-select: none; }

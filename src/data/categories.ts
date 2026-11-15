@@ -152,13 +152,20 @@ export const categories: Category[] = [
 
 export const categoryBySlug = Object.fromEntries(categories.map((c) => [c.slug, c]));
 
+export const processTitle = 'Quy trình sản xuất sản phẩm nhựa Composite';
+export const processIntro = 'Tại Điêu khắc Trần Sâm, mỗi sản phẩm không chỉ là một công trình tạo hình mà còn là kết quả của quá trình nghiên cứu, thiết kế và chế tác tỉ mỉ. Chúng tôi luôn chú trọng từng công đoạn sản xuất, kết hợp kỹ thuật gia công hiện đại với tay nghề thủ công, nhằm mang đến những sản phẩm có tính thẩm mỹ cao, độ bền tốt và đáp ứng đúng yêu cầu của khách hàng.';
+export const processOutro = 'Chúng tôi cam kết đặt sự tận tâm, tính chuyên nghiệp và uy tín lên hàng đầu trong từng sản phẩm, từng công trình. Không ngừng cải tiến kỹ thuật và nâng cao chất lượng để mang đến những giá trị bền vững cho khách hàng.';
+
 export const process = [
-  { title: 'Nghe bạn kể', text: 'Gửi ảnh mặt bằng, kích thước, ý tưởng hoặc ảnh mẫu. Xưởng hỏi lại những điều cần biết: đặt ở đâu, nhìn từ khoảng cách nào, ngân sách và thời hạn.', image: 'phu-dieu-decor-28' },
-  { title: 'Phác thảo', text: 'Bản vẽ bố cục đặt lên ảnh thật của công trình, để bạn thấy tác phẩm nằm trong không gian trước khi làm.', image: 'phu-dieu-decor-06' },
-  { title: 'Nặn mẫu đất sét', text: 'Nghệ nhân nặn mẫu ở tỷ lệ thật. Đây là lúc bạn đến xưởng xem, góp ý từng chi tiết. Mẫu chưa đạt thì chưa đúc.', image: 'phu-dieu-decor-13' },
-  { title: 'Làm khuôn và đúc', text: 'Lấy khuôn từ mẫu đã duyệt, đúc bằng composite, composite xuyên sáng hoặc xi măng, gia cố khung thép khi cần.', image: 'phat-giao-16' },
-  { title: 'Hoàn thiện bề mặt', text: 'Mài, sửa nguội, sơn giả đồng, giả đá, nhũ vàng hoặc sơn màu theo mẫu đã chọn.', image: 'phu-dieu-decor-15' },
-  { title: 'Vận chuyển và lắp đặt', text: 'Đóng gói, vận chuyển và lắp đặt tại công trình. Bàn giao kèm hướng dẫn bảo quản.', image: 'bao-tang-07' },
+  { title: 'Tiếp nhận yêu cầu và tư vấn khách hàng', text: 'Tiếp nhận thông tin, ý tưởng, hình ảnh tham khảo, kích thước và mục đích sử dụng sản phẩm. Từ đó, tư vấn phương án thiết kế, vật liệu, kết cấu và giải pháp sản xuất phù hợp.', image: 'phu-dieu-decor-06', alt: 'Sân vườn có mảng phù điêu gắn trên tường bao' },
+  { title: 'Thiết kế bản vẽ và duyệt phương án', text: 'Tiến hành dựng hình, thiết kế bản vẽ 2D, 3D theo yêu cầu. Thể hiện rõ hình dáng, kích thước, tỷ lệ và các chi tiết kỹ thuật. Bản thiết kế được gửi khách hàng kiểm tra và phê duyệt trước khi triển khai sản xuất.', image: 'quan-co-12', alt: 'Bảng phương án bộ quân cờ khổng lồ có ghi kích thước từng quân' },
+  { title: 'Tạo mẫu sản phẩm', text: 'Sau khi bản vẽ được duyệt, tiến hành tạo mẫu thực tế bằng công nghệ in 3D hoặc gia công CNC trên phôi xốp. Đây là bước giúp định hình sản phẩm, kiểm tra tỷ lệ, hình dáng và độ chính xác của các chi tiết trước khi làm khuôn.', image: 'phu-dieu-decor-13', alt: 'Thợ ngồi trước mẫu phù điêu hoa văn khổ lớn trong xưởng' },
+  { title: 'Chế tạo khuôn thạch cao', text: 'Từ mẫu hoàn thiện, tiến hành tạo khuôn thạch cao theo từng phần. Tùy theo kích thước và hình dáng sản phẩm, khuôn được phân chia thành nhiều mảnh hoặc module nhằm thuận tiện cho quá trình đúc, tháo khuôn và lắp ráp.', image: 'phat-giao-16', alt: 'Các mảnh khuôn phù điêu xếp trong sân xưởng' },
+  { title: 'Đúc sản phẩm nhựa Composite', text: 'Tiến hành phủ và gia công các lớp vật liệu composite bên trong khuôn theo yêu cầu kỹ thuật. Tùy đặc điểm sản phẩm, có thể kết hợp gia cố khung sắt bên trong để tăng độ cứng, khả năng chịu lực và độ ổn định của kết cấu.', image: 'phu-dieu-decor-34', alt: 'Mảng phù điêu composite trắng vừa đúc xong đặt trong xưởng' },
+  { title: 'Ráp nối và gia cố kết cấu', text: 'Các chi tiết sau khi đúc được tháo khuôn, kiểm tra và tiến hành ráp nối thành sản phẩm hoàn chỉnh. Những vị trí liên kết được xử lý chắc chắn, kết hợp khung gia cố bên trong nhằm đảm bảo độ bền và tính an toàn khi sử dụng.', image: 'xuyen-sang-02', alt: 'Mô hình bánh sừng bò cỡ lớn đặt trên khung đỡ trong xưởng' },
+  { title: 'Làm nguội và hoàn thiện bề mặt', text: 'Tiến hành xử lý các đường ráp nối, mối ghép, bavia và những khuyết điểm trên bề mặt. Thực hiện mài, trét, chà nhám và xử lý nhiều công đoạn để tạo bề mặt phẳng, mịn, đạt yêu cầu trước khi sơn.', image: 'phu-dieu-decor-41', alt: 'Tượng người cưỡi ngựa màu trắng đang xử lý bề mặt' },
+  { title: 'Sơn phủ và vẽ hoàn thiện', text: 'Sản phẩm được xử lý lớp sơn lót, sơn màu và sơn phủ bảo vệ theo thiết kế. Đối với các sản phẩm tượng, mô hình nghệ thuật, đội ngũ kỹ thuật tiến hành vẽ màu, tạo hiệu ứng và hoàn thiện các chi tiết trang trí nhằm đảm bảo tính thẩm mỹ và độ chân thực.', image: 'quan-co-15', alt: 'Quân mã màu hồng vừa sơn, đặt cạnh kệ thùng sơn trong phòng sơn' },
+  { title: 'Kiểm tra chất lượng và bàn giao', text: 'Kiểm tra tổng thể hình dáng, kích thước, kết cấu, màu sắc và chất lượng hoàn thiện. Đóng gói, vận chuyển và bàn giao sản phẩm đến khách hàng theo đúng yêu cầu đã thống nhất.', image: 'quan-co-04', alt: 'Bộ cờ vua khổng lồ trắng đen đã lắp đặt trên sân cỏ công viên' },
 ];
 
 export const materials = [

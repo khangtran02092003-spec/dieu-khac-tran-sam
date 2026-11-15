@@ -3,31 +3,24 @@ import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import Picture from '../components/Picture.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { process } from '../data/categories';
-const extra = [
-  'Bạn chỉ cần ảnh chụp không gian, kích thước ước lượng và vài ảnh mẫu bạn thích. Chưa có ý tưởng rõ cũng được.',
-  'Bản phác thảo được chỉnh đến khi bố cục, tỷ lệ và đề tài đúng ý. Báo giá chính thức đi kèm bản phác thảo đã chốt.',
-  'Bạn đến xưởng xem trực tiếp, hoặc xem ảnh và video dưới nhiều góc đèn qua Zalo. Xưởng chỉ đúc khi bạn đồng ý.',
-  'Tác phẩm lớn được chia mảng để vận chuyển, có khung thép và điểm neo tính sẵn cho vị trí lắp.',
-  'Bạn duyệt mẫu màu trên tấm thử trước khi xưởng sơn toàn bộ tác phẩm.',
-  'Đội lắp đặt của xưởng xử lý mối ghép, vệ sinh và hướng dẫn cách bảo quản khi bàn giao.',
-];
+import Motto from '../components/Motto.astro';
+import { process, processTitle, processIntro } from '../data/categories';
 ---
-<Base title="Quy trình làm việc" description="Sáu bước làm một tác phẩm tại xưởng Điêu khắc Trần Sâm: nghe ý tưởng, phác thảo, nặn mẫu đất sét, làm khuôn và đúc, hoàn thiện bề mặt, vận chuyển và lắp đặt.">
-  <PageHead title="Quy trình làm việc" lede="Mỗi tác phẩm đi qua sáu bước. Ở bước nào bạn cũng được xem và góp ý trước khi xưởng làm bước tiếp theo." crumbs={[{ href: '/quy-trinh/', label: 'Quy trình' }]} />
+<Base title="Quy trình sản xuất" description="Chín công đoạn sản xuất sản phẩm nhựa composite tại Điêu khắc Trần Sâm: tư vấn, thiết kế 2D/3D, tạo mẫu in 3D hoặc CNC, khuôn thạch cao, đúc composite, ráp nối, hoàn thiện bề mặt, sơn vẽ, kiểm tra và bàn giao.">
+  <PageHead title={processTitle} lede={processIntro} crumbs={[{ href: '/quy-trinh/', label: 'Quy trình' }]} />
   <ol class="wrap steps">
     {process.map((s, i) => (
       <li class="step">
         <div class="n engraved" aria-hidden="true">{String(i + 1).padStart(2, '0')}</div>
         <div class="t">
-          <h2>{s.title}</h2>
+          <h2><span class="sr-only">Bước {i + 1}: </span>{s.title}</h2>
           <p class="lede">{s.text}</p>
-          <p>{extra[i]}</p>
         </div>
-        <Picture src={s.image} alt="" ratio="4 / 3" sizes="(max-width: 860px) 100vw, 40vw" class="img" />
+        <Picture src={s.image} alt={s.alt} ratio="4 / 3" sizes="(max-width: 860px) 100vw, 40vw" class="img" />
       </li>
     ))}
   </ol>
+  <section class="wrap outro" aria-label="Cam kết"><Motto /></section>
   <CtaBand title="Sẵn sàng cho bước một?" text="Gửi ảnh không gian và ý tưởng. Xưởng gọi lại trong giờ làm việc." />
 </Base>
 <style>
@@ -36,6 +29,8 @@ const extra = [
   .n { font-family: var(--font-display); font-variation-settings: 'wdth' 62.5; font-weight: 600; font-size: clamp(3.5rem, 2.5rem + 3vw, 5.5rem); line-height: 0.9; }
   h2 { font-size: var(--step-3); margin-bottom: 1rem; }
   .t p:not(.lede) { color: var(--fg-soft); max-width: 52ch; }
-  .lede { margin-bottom: 1rem; }
+  .lede { margin-bottom: 1rem; color: var(--fg-soft); max-width: 56ch; }
+  .outro { padding-bottom: var(--section); }
+  .steps { padding-bottom: clamp(3rem, 2rem + 3vw, 5rem); }
   @media (max-width: 860px) { .step { grid-template-columns: 1fr; } }
 </style>

@@ -1,28 +1,24 @@
 ---
-// Dấu hiệu: một ô vòm (như khám phù điêu) có viền trong lõm vào, chứa chữ lồng TS đắp nổi.
-// Bóng đổ lệch về phải-dưới gợi ánh đèn xiên chiếu từ trên-trái — cùng ý tưởng với hero.
-interface Props { class?: string; mono?: boolean }
-const { class: cls, mono = false } = Astro.props;
+// Logo: biểu tượng S-Decor (chữ S xanh, tượng vàng, vòng cung) đặt trong một huy hiệu tròn màu thạch cao,
+// để giữ đúng màu gốc trên cả nền tối (header đè ảnh, footer) lẫn nền sáng.
+interface Props { class?: string; size?: 'md' | 'lg' }
+const { class: cls, size = 'md' } = Astro.props;
 ---
-<span class:list={['logo', cls]}>
-  <svg viewBox="0 0 40 48" aria-hidden="true" class="mark">
-    <!-- vòm ngoài -->
-    <path d="M2 46V20a18 18 0 0 1 36 0v26z" fill="none" stroke="currentColor" stroke-width="1.6" />
-    <!-- vòm trong (mặt lõm) -->
-    <path d="M7 46V21a13 13 0 0 1 26 0v25" fill="none" stroke="currentColor" stroke-width="0.9" opacity=".45" />
-    <!-- bóng đổ của chữ -->
-    {!mono && <text x="20.9" y="39.9" text-anchor="middle" class="mono shadow">TS</text>}
-    <!-- chữ lồng -->
-    <text x="20" y="39" text-anchor="middle" class="mono">TS</text>
-  </svg>
-  <span class="word"><span class="a">Điêu khắc</span><span class="b">Trần Sâm</span></span>
+<span class:list={['logo', `is-${size}`, cls]}>
+  <span class="seal" aria-hidden="true">
+    <img src="/brand/emblem-160.webp" srcset="/brand/emblem-160.webp 160w, /brand/emblem-320.webp 320w" sizes="4rem" width="160" height="136" alt="" decoding="async" />
+  </span>
+  <span class="word"><span class="a">Điêu khắc</span><span class="b">Trần <em>Sâm</em></span></span>
 </span>
 <style>
-  .logo { display: inline-flex; align-items: center; gap: 0.75rem; line-height: 1; }
-  .mark { width: 2.4rem; height: 2.9rem; flex: none; overflow: visible; }
-  .mono { font-family: var(--font-display); font-variation-settings: 'wdth' 68; font-weight: 500; font-size: 19px; letter-spacing: -0.3px; fill: currentColor; }
-  .shadow { opacity: 0.18; }
+  .logo { display: inline-flex; align-items: center; gap: 0.8rem; line-height: 1; }
+  /* huy hiệu: nền thạch cao, viền vàng mảnh, bóng đổ lệch như ánh đèn xiên */
+  .seal { --s: 3.1rem; position: relative; flex: none; width: var(--s); height: var(--s); border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fffdf7, var(--plaster) 55%, #ece4d1); box-shadow: 0 0 0 1px rgba(201, 150, 40, 0.75), 0 0 0 3px rgba(251, 250, 246, 0.12), 2px 3px 8px rgba(0, 0, 0, 0.28); display: grid; place-items: center; }
+  .seal img { width: 74%; height: auto; display: block; transform: translateY(-2%); }
   .word { display: flex; flex-direction: column; gap: 0.2rem; }
-  .a { font-size: 0.75rem; letter-spacing: 0.02em; opacity: 0.75; }
+  .a { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.78; }
   .b { font-family: var(--font-display); font-variation-settings: 'wdth' 75; font-size: 1.5rem; font-weight: 500; letter-spacing: -0.005em; }
+  .b em { font-style: normal; color: var(--gold, #c9962a); }
+  .is-lg .seal { --s: 4.25rem; }
+  .is-lg .b { font-size: 1.85rem; }
 </style>

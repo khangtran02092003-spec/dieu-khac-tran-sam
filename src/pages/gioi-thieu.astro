@@ -5,43 +5,92 @@ import Picture from '../components/Picture.astro';
 import CtaBand from '../components/CtaBand.astro';
 import site from '../data/site.json';
 const stats = site.stats.filter((s) => s.value);
+
+// Mỗi giá trị đi kèm ba ảnh thật: một ảnh chính khung vòm, hai ảnh phụ xếp lệch như mảng phù điêu ghép.
 const values = [
-  { t: 'Nặn tay trước, đúc sau', d: 'Máy móc giúp làm khuôn và đúc nhanh hơn, nhưng hình khối vẫn do nghệ nhân nặn bằng tay trên đất sét. Đó là chỗ một tác phẩm có hồn hay không.' },
-  { t: 'Làm cho đúng chỗ đặt', d: 'Một bức phù điêu nhìn từ sảnh cao sáu mét khác với bức treo trên sofa. Xưởng hỏi kỹ khoảng cách nhìn, hướng sáng, màu tường trước khi phác thảo.' },
-  { t: 'Bạn duyệt, rồi mới làm tiếp', d: 'Phác thảo, mẫu đất sét, mẫu màu: mỗi bước đều chờ bạn đồng ý. Không có bất ngờ khi tác phẩm đến công trình.' },
+  {
+    t: 'Kết hợp công nghệ và tay nghề thủ công',
+    d: 'Từ bản vẽ thiết kế, sản phẩm được tạo mẫu bằng công nghệ in 3D hoặc gia công CNC trên phôi xốp. Kết hợp với kinh nghiệm và kỹ thuật của đội ngũ thợ lành nghề trong các công đoạn làm khuôn, đúc Composite và hoàn thiện sản phẩm.',
+    q: 'Công nghệ hỗ trợ độ chính xác, tay nghề tạo nên chất lượng và tính thẩm mỹ.',
+    imgs: [
+      { src: 'phu-dieu-decor-11', alt: 'Thợ ngồi trước mảng mẫu phù điêu hoa văn khổ lớn trong xưởng' },
+      { src: 'quan-co-12', alt: 'Bảng phương án bộ quân cờ có ghi kích thước từng quân' },
+      { src: 'phu-dieu-decor-16', alt: 'Mẫu phù điêu nhiều nhân vật đang hoàn thiện' },
+    ],
+  },
+  {
+    t: 'Chú trọng kết cấu và độ bền sản phẩm',
+    d: 'Mỗi sản phẩm được tính toán phương án chế tạo phù hợp với kích thước, hình dáng và mục đích sử dụng. Tùy theo yêu cầu, sản phẩm được chia thành nhiều phần để thuận tiện cho việc đúc, lắp ráp và vận chuyển.',
+    q: 'Khung sắt gia cố bên trong được bố trí khi cần thiết nhằm tăng độ cứng và khả năng chịu lực.',
+    imgs: [
+      { src: 'xuyen-sang-01', alt: 'Mô hình bánh sừng bò cỡ lớn đang ráp trên khung trong nhà xưởng' },
+      { src: 'phat-giao-14', alt: 'Các mảng phù điêu đúc theo module xếp ngoài sân xưởng' },
+      { src: 'quan-co-11', alt: 'Quân cờ khổng lồ xếp hàng chờ vận chuyển' },
+    ],
+  },
+  {
+    t: 'Tỉ mỉ trong từng công đoạn hoàn thiện',
+    d: 'Với đội ngũ thợ có nhiều năm kinh nghiệm, được đào tạo bài bản, mỗi sản phẩm đều trải qua các bước xử lý bề mặt, mài, trét, chà nhám và sơn vẽ hoàn thiện.',
+    q: 'Chúng tôi chú trọng từng chi tiết nhỏ để đảm bảo hình dáng, màu sắc và chất lượng sản phẩm đạt yêu cầu trước khi bàn giao.',
+    imgs: [
+      { src: 'mo-hinh-do-an-15', alt: 'Mô hình nồi lẩu có linh vật con cua vừa sơn màu xong trong xưởng' },
+      { src: 'quan-co-15', alt: 'Quân mã màu hồng vừa sơn cạnh kệ thùng sơn' },
+      { src: 'phu-dieu-decor-21', alt: 'Thợ ngồi cạnh cụm tượng xe ngựa phủ nhũ vàng' },
+    ],
+  },
 ];
 ---
-<Base title="Về xưởng" description="Điêu khắc Trần Sâm là xưởng điêu khắc và tạo hình theo yêu cầu: phù điêu, tượng, mô hình, linh vật. Nặn mẫu đất sét để khách duyệt trước khi đúc.">
+<Base title="Về xưởng" description="Điêu khắc Trần Sâm (Công ty TNHH TM DV Mỹ thuật S-Decor): xưởng sản xuất thủ công, tạo mẫu in 3D/CNC, làm khuôn, đúc nhựa composite, gia công kết cấu và sơn hoàn thiện phù điêu, tượng, mô hình theo yêu cầu.">
   <PageHead title="Một xưởng làm bằng tay" lede="Điêu khắc Trần Sâm nhận làm phù điêu, tượng và mô hình theo yêu cầu. Từ một tấm ảnh mẫu hay một bức tường trống, xưởng đưa ý tưởng thành khối." crumbs={[{ href: '/gioi-thieu/', label: 'Về xưởng' }]} />
 
   <section class="wrap grid12 hero-img">
-    <div class="a"><Picture src="phu-dieu-decor-11" alt="Nghệ nhân ngồi trước mảng phù điêu hoa văn bằng đất sét trong xưởng" ratio="4 / 3" sizes="(max-width: 900px) 100vw, 60vw" loading="eager" /></div>
+    <div class="a"><Picture src="phu-dieu-decor-11" alt="Thợ ngồi trước mảng phù điêu hoa văn trong xưởng" ratio="4 / 3" sizes="(max-width: 900px) 100vw, 60vw" loading="eager" /></div>
     <div class="b"><Picture class="arch" src="phu-dieu-decor-20" alt="Cặp tượng cột người trắng đứng cạnh thợ trong xưởng" ratio="3 / 4" sizes="(max-width: 900px) 50vw, 30vw" /></div>
   </section>
 
-  <section class="wrap grid12 story">
-    <h2 class="h">Câu chuyện của xưởng</h2>
+  <section class="wrap grid12 story" aria-labelledby="story-h">
+    <div class="h">
+      <span class="kicker">Về xưởng</span>
+      <h2 id="story-h">Xưởng sản xuất thủ công</h2>
+    </div>
     <div class="prose txt">
-      <p>[CẦN ĐIỀN] Đoạn này dành cho câu chuyện thật của xưởng: ai là người sáng lập, bắt đầu từ năm nào, ở đâu, vì sao chọn nghề điêu khắc, những công trình đáng nhớ.</p>
-      <p>Hiện nay xưởng làm mười dòng tác phẩm, từ phù điêu trang trí, tượng thờ, tượng chân dung, đến linh vật cho nhà máy, mô hình phát sáng cho cửa hàng và đồ nội thất composite. Khách hàng gồm gia đình, nhà chùa, doanh nghiệp, đơn vị thiết kế trưng bày và agency sự kiện.</p>
+      <p class="lede">Tại Điêu khắc Trần Sâm (DkTS), chúng tôi đề cao giá trị của kỹ thuật thủ công và kinh nghiệm thực tiễn trong từng công đoạn chế tác.</p>
+      <p>Đội ngũ thợ có nhiều năm kinh nghiệm, được đào tạo bài bản về kỹ thuật tạo mẫu, làm khuôn, đúc nhựa Composite, gia công kết cấu, xử lý bề mặt và sơn hoàn thiện.</p>
+      <p>Mỗi sản phẩm đều được thực hiện bằng sự tỉ mỉ, khéo léo và tinh thần trách nhiệm của người thợ. Chúng tôi kết hợp kinh nghiệm thủ công với các phương pháp gia công hiện đại, đảm bảo sản phẩm đạt yêu cầu về hình dáng, kết cấu, tính thẩm mỹ và chất lượng hoàn thiện.</p>
+      <ul class="crafts" aria-label="Các kỹ thuật của đội thợ">
+        {['Tạo mẫu', 'Làm khuôn', 'Đúc Composite', 'Gia công kết cấu', 'Xử lý bề mặt', 'Sơn hoàn thiện'].map((c) => <li>{c}</li>)}
+      </ul>
     </div>
     {stats.length > 0 && (
       <dl class="stats">{stats.map((s) => <div><dd>{s.value}</dd><dt>{s.label}</dt></div>)}</dl>
     )}
   </section>
 
-  <section class="on-cream values">
+  <section class="on-cream values" aria-labelledby="values-h">
     <div class="wrap">
-      <h2>Ba điều xưởng giữ</h2>
-      <ul>{values.map((v) => <li><h3>{v.t}</h3><p>{v.d}</p></li>)}</ul>
+      <div class="v-head">
+        <span class="kicker">Bản sắc của xưởng</span>
+        <h2 id="values-h">Ba giá trị cốt lõi trong chế tác</h2>
+      </div>
+      <ol class="v-list">
+        {values.map((v, i) => (
+          <li class:list={['v', { flip: i % 2 === 1 }]}>
+            <div class="v-art">
+              <div class="v-main"><Picture class="arch" src={v.imgs[0].src} alt={v.imgs[0].alt} ratio="4 / 5" sizes="(max-width: 900px) 70vw, 30vw" /></div>
+              <div class="v-sub v-sub-1"><Picture src={v.imgs[1].src} alt={v.imgs[1].alt} ratio="1 / 1" sizes="(max-width: 900px) 40vw, 16vw" /></div>
+              <div class="v-sub v-sub-2"><Picture src={v.imgs[2].src} alt={v.imgs[2].alt} ratio="4 / 3" sizes="(max-width: 900px) 45vw, 18vw" /></div>
+              <span class="v-num engraved" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            </div>
+            <div class="v-text">
+              <h3><span class="sr-only">{i + 1}. </span>{v.t}</h3>
+              <p>{v.d}</p>
+              <p class="v-q">{v.q}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <p class="v-close">Chúng tôi không chỉ tạo ra sản phẩm theo bản vẽ, mà còn chú trọng từng chi tiết trong quá trình chế tác để mỗi sản phẩm hoàn thiện đều đáp ứng yêu cầu về <em>kỹ thuật</em>, <em>thẩm mỹ</em> và <em>chất lượng</em>.</p>
     </div>
-  </section>
-
-  <section class="wrap strip" aria-label="Hình ảnh xưởng">
-    <Picture src="phat-giao-16" alt="Khuôn phù điêu Phật đứng xếp trong sân xưởng" ratio="1 / 1" sizes="25vw" />
-    <Picture src="phu-dieu-decor-16" alt="Phù điêu nhiều nhân vật bằng đất sét đang nặn" ratio="1 / 1" sizes="25vw" />
-    <Picture src="mo-hinh-do-an-03" alt="Thợ đứng cạnh mô hình bánh mì xúc xích cao ngang người" ratio="1 / 1" sizes="25vw" />
-    <Picture src="bao-tang-13" alt="Thợ hoàn thiện cụm tượng trong nhà trưng bày" ratio="1 / 1" sizes="25vw" />
   </section>
 
   <CtaBand />
@@ -51,16 +100,49 @@ const values = [
   .a { grid-column: 1 / span 8; }
   .b { grid-column: 9 / span 4; }
   .story { padding-block: var(--section); row-gap: 2rem; }
-  .h { grid-column: 1 / span 4; font-size: var(--step-3); }
+  .h { grid-column: 1 / span 4; }
+  .h h2 { font-size: var(--step-3); }
   .txt { grid-column: 6 / span 7; }
+  .txt .lede { color: var(--ink); }
+  .crafts { list-style: none; margin: 2rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .crafts li { padding: 0.4rem 0.9rem; border: 1px solid var(--rule); border-radius: 999px; font-size: var(--step--1); color: var(--jade-700); background: var(--plaster); }
   .stats { grid-column: 6 / span 7; display: flex; flex-wrap: wrap; gap: 2rem 3rem; margin: 1rem 0 0; }
   .stats dd { margin: 0; font-family: var(--font-display); font-variation-settings: 'wdth' 70; font-size: var(--step-4); line-height: 1; }
   .stats dt { font-size: var(--step--1); color: var(--fg-soft); margin-top: 0.4rem; }
+
+  /* Ba giá trị cốt lõi: hàng so le trái/phải, mỗi hàng một cụm ảnh ghép */
   .values { padding-block: var(--section); }
-  .values ul { list-style: none; margin: 3rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.5rem var(--gutter); }
-  .values li { border-top: 1px solid var(--rule); padding-top: 1.25rem; }
-  .values h3 { margin-bottom: 0.75rem; }
-  .values p { color: var(--fg-soft); }
-  .strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; padding-block: var(--section); }
-  @media (max-width: 900px) { .a, .b, .h, .txt, .stats { grid-column: 1 / -1; } .values ul { grid-template-columns: 1fr; } .strip { grid-template-columns: repeat(2, 1fr); } }
+  .v-head { text-align: center; margin-bottom: clamp(3rem, 2rem + 4vw, 6rem); }
+  .v-head h2 { max-width: 20ch; margin-inline: auto; }
+  .v-list { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(4.5rem, 3rem + 5vw, 8rem); }
+  .v { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 2.5rem clamp(2rem, 1rem + 4vw, 5rem); align-items: center; }
+  .v.flip .v-art { order: 2; }
+  .v-art { position: relative; padding: 0 22% 14% 0; }
+  .v.flip .v-art { padding: 0 0 14% 22%; }
+  .v-main { position: relative; z-index: 1; }
+  /* khung trong của ảnh chính: viền mảnh lùi vào như gờ khám thờ */
+  .v-main::after { content: ''; position: absolute; inset: 0.75rem; border: 1px solid rgba(251, 250, 246, 0.55); border-radius: 999px 999px 0 0; pointer-events: none; z-index: 2; }
+  .v-sub { position: absolute; z-index: 2; box-shadow: 0 0 0 6px var(--limestone), 0 18px 34px -16px rgba(16, 33, 25, 0.5); }
+  .v-sub-1 { width: 34%; right: 2%; top: 14%; }
+  .v-sub-2 { width: 42%; right: 8%; bottom: 0; }
+  .v.flip .v-sub-1 { right: auto; left: 2%; }
+  .v.flip .v-sub-2 { right: auto; left: 8%; }
+  .v-num { position: absolute; z-index: 3; left: -0.4rem; bottom: 4%; font-family: var(--font-display); font-variation-settings: 'wdth' 62.5; font-weight: 600; font-size: clamp(4rem, 2.5rem + 5vw, 8rem); line-height: 0.8; }
+  .v.flip .v-num { left: auto; right: -0.4rem; }
+  .v-text h3 { font-size: var(--step-3); line-height: 1.15; margin-bottom: 1.25rem; max-width: 18ch; }
+  .v-text p { color: var(--fg-soft); max-width: 52ch; }
+  .v-q { margin-top: 1.25rem; padding-left: 1.1rem; border-left: 2px solid var(--gold); color: var(--ink) !important; font-family: var(--font-display); font-style: italic; font-variation-settings: 'wdth' 85; font-size: 1.2rem; line-height: 1.45; }
+  .v-close { max-width: 44rem; margin: clamp(4.5rem, 3rem + 4vw, 7rem) auto 0; padding-top: 2.5rem; border-top: 1px solid var(--rule); text-align: center; font-family: var(--font-display); font-variation-settings: 'wdth' 85; font-size: clamp(1.25rem, 1rem + 0.9vw, 1.7rem); line-height: 1.45; }
+  .v-close em { font-style: normal; color: var(--jade-700); border-bottom: 1px solid var(--gold); }
+
+  @media (max-width: 900px) {
+    .a, .b, .h, .txt, .stats { grid-column: 1 / -1; }
+    .v, .v.flip { grid-template-columns: 1fr; }
+    .v.flip .v-art { order: 0; }
+    .v-art, .v.flip .v-art { padding: 0 18% 16% 0; max-width: 34rem; }
+    .v.flip .v-sub-1, .v.flip .v-sub-2 { left: auto; }
+    .v.flip .v-sub-1 { right: 2%; }
+    .v.flip .v-sub-2 { right: 8%; }
+    .v.flip .v-num { right: auto; left: -0.4rem; }
+  }
 </style>

@@ -7,7 +7,10 @@ import WorkCard from '../components/WorkCard.astro';
 import NewsCard from '../components/NewsCard.astro';
 import QuoteForm from '../components/QuoteForm.astro';
 import Icon from '../components/Icon.astro';
-import { categories, process, materials } from '../data/categories';
+import Motto from '../components/Motto.astro';
+import MapCard from '../components/MapCard.astro';
+import { categories, process, processTitle, processIntro, materials } from '../data/categories';
+import { phones, filled } from '../lib/contact';
 import site from '../data/site.json';
 
 const works = (await getCollection('tac-pham')).sort((a, b) => a.data.order - b.data.order);
@@ -34,7 +37,7 @@ const museum = works.find((w) => w.id === 'cum-tuong-nha-trung-bay');
     <div class="wrap grid12">
       <h2 class="i-h">Một xưởng, mười dòng tác phẩm, cùng một cách làm</h2>
       <div class="i-p">
-        <p class="lede">Từ bức phù điêu tường nhà, pho tượng thờ, tượng chân dung ông bà, đến linh vật cho nhà máy và mô hình phát sáng cho quán ăn: mọi tác phẩm đều đi qua tay nghệ nhân nặn mẫu, và bạn duyệt mẫu trước khi xưởng đúc.</p>
+        <p class="lede">Từ bức phù điêu tường nhà, pho tượng thờ, tượng chân dung ông bà, đến linh vật cho nhà máy và mô hình phát sáng cho quán ăn: mọi tác phẩm đều đi qua đủ các công đoạn thiết kế, tạo mẫu, làm khuôn, đúc composite và hoàn thiện tại xưởng, và bạn duyệt phương án trước khi xưởng sản xuất.</p>
         {stats.length > 0 && (
           <dl class="stats">
             {stats.map((s) => <div><dt>{s.label}</dt><dd>{s.value}</dd></div>)}
@@ -85,20 +88,27 @@ const museum = works.find((w) => w.id === 'cum-tuong-nha-trung-bay');
   <!-- Quy trình -->
   <section class="section on-cream process" aria-labelledby="proc-h">
     <div class="wrap">
-      <div class="head">
-        <h2 id="proc-h">Sáu bước, bạn duyệt ở mỗi bước</h2>
-        <a class="link-quiet" href="/quy-trinh/">Quy trình chi tiết</a>
+      <div class="proc-head">
+        <div>
+          <span class="kicker">Quy trình sản xuất · 9 công đoạn</span>
+          <h2 id="proc-h">{processTitle}</h2>
+        </div>
+        <p class="lede">{processIntro}</p>
       </div>
       <ol class="steps">
         {process.map((s, i) => (
           <li>
-            <Picture src={s.image} alt="" ratio="4 / 3" sizes="(max-width: 720px) 100vw, 33vw" />
-            <span class="num engraved" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-            <h3>{s.title}</h3>
+            <div class="s-pic">
+              <Picture src={s.image} alt={s.alt} ratio="3 / 2" sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw" />
+              <span class="num engraved" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            </div>
+            <h3><span class="sr-only">Bước {i + 1}: </span>{s.title}</h3>
             <p>{s.text}</p>
           </li>
         ))}
       </ol>
+      <Motto class="proc-motto" />
+      <div class="proc-more"><a class="btn btn-ghost" href="/quy-trinh/">Xem quy trình chi tiết</a></div>
     </div>
   </section>
 
@@ -158,10 +168,12 @@ const museum = works.find((w) => w.id === 'cum-tuong-nha-trung-bay');
         <h2 id="quote-h">Kể cho xưởng nghe bạn đang nghĩ gì</h2>
         <p class="lede">Vài dòng mô tả là đủ để bắt đầu. Xưởng gọi lại để hỏi thêm, rồi gửi phác thảo và báo giá.</p>
         <ul class="q-contact">
-          {site.phoneHref && <li><Icon name="phone" /><a href={`tel:${site.phoneHref}`}>{site.phone}</a></li>}
+          {phones.map((p) => <li><Icon name="phone" /><a href={`tel:${p.href}`}>{p.label}</a></li>)}
+          {filled(site.email) && <li><Icon name="mail" /><a href={`mailto:${site.email}`}>{site.email}</a></li>}
           {site.zalo && <li><Icon name="chat" /><a href={`https://zalo.me/${site.zalo.replace(/\D/g, '')}`} target="_blank" rel="noopener">Nhắn Zalo cho xưởng</a></li>}
           <li><Icon name="clock" /><span>{site.hours}</span></li>
         </ul>
+        <MapCard class="q-map" />
       </div>
       <div class="q-form"><QuoteForm compact /></div>
     </div>
@@ -205,12 +217,19 @@ const museum = works.find((w) => w.id === 'cum-tuong-nha-trung-bay');
   @media (max-width: 640px) { .feat-grid { grid-template-columns: 1fr; } }
 
   /* Quy trình */
-  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem var(--gutter); }
+  .proc-head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 1.5rem var(--gutter); align-items: end; margin-bottom: clamp(2.5rem, 2rem + 2vw, 4rem); }
+  .proc-head h2 { max-width: 16ch; margin-top: 0.6rem; }
+  .proc-head .lede { margin: 0; color: var(--fg-soft); }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3.25rem var(--gutter); counter-reset: s; }
   .steps li { position: relative; }
-  .num { display: block; font-family: var(--font-display); font-variation-settings: 'wdth' 62.5; font-weight: 600; font-size: 4.5rem; line-height: 0.9; margin: 1.25rem 0 0.4rem; }
-  .steps h3 { margin-bottom: 0.5rem; }
-  .steps p { color: var(--fg-soft); margin: 0; }
-  @media (max-width: 900px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .s-pic { position: relative; margin-bottom: 1.6rem; }
+  /* số bước khắc chìm, đè lên mép dưới ảnh như dấu triện */
+  .num { position: absolute; left: 0.9rem; bottom: -1.35rem; display: grid; place-items: center; min-width: 3.4rem; height: 3.4rem; padding: 0 0.5rem; background: var(--limestone); border-radius: 999px 999px 0 0; font-family: var(--font-display); font-variation-settings: 'wdth' 62.5; font-weight: 600; font-size: 2.1rem; line-height: 1; }
+  .steps h3 { font-size: 1.3rem; line-height: 1.25; margin-bottom: 0.55rem; }
+  .steps p { color: var(--fg-soft); margin: 0; font-size: 0.97rem; }
+  :global(.proc-motto) { margin-top: clamp(4rem, 3rem + 3vw, 6rem); padding-top: clamp(3rem, 2.5rem + 2vw, 4rem); border-top: 1px solid var(--rule); }
+  .proc-more { display: flex; justify-content: center; margin-top: 2rem; }
+  @media (max-width: 900px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } .proc-head { grid-template-columns: 1fr; } }
   @media (max-width: 600px) { .steps { grid-template-columns: 1fr; } }
 
   /* Câu chuyện */
@@ -241,6 +260,7 @@ const museum = works.find((w) => w.id === 'cum-tuong-nha-trung-bay');
   .q-form { grid-column: 7 / span 6; }
   .q-contact { list-style: none; margin: 2rem 0 0; padding: 0; }
   .q-contact li { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+  .q-head :global(.q-map) { margin-top: 2rem; max-width: 30rem; }
   .q-contact :global(svg) { width: 1.2rem; height: 1.2rem; color: var(--jade-600); }
   @media (max-width: 900px) {
     .i-h, .i-p, .q-head, .q-form { grid-column: 1 / -1; }

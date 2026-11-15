@@ -1,0 +1,52 @@
+---
+// Bản đồ xưởng dạng "tấm bia": khung bản đồ Google nhúng, phủ tông rêu cho hợp bảng màu,
+// cả khung là một đường dẫn mở thẳng Google Maps (trên điện thoại sẽ mở app).
+import site from '../data/site.json';
+import Icon from './Icon.astro';
+import { mapLink, directionsLink, mapEmbed } from '../lib/contact';
+interface Props { class?: string }
+const { class: cls } = Astro.props;
+---
+<figure class:list={['map-card', cls]}>
+  <a class="frame" href={mapLink} target="_blank" rel="noopener" aria-label={`Mở Google Maps: ${site.address}`}>
+    <iframe src={mapEmbed} title="Bản đồ vị trí xưởng" loading="lazy" referrerpolicy="no-referrer-when-downgrade" tabindex="-1" aria-hidden="true"></iframe>
+    <span class="corner" aria-hidden="true">
+      <img src="/brand/emblem-160.webp" width="160" height="136" alt="" decoding="async" loading="lazy" />
+    </span>
+    <span class="plate">
+      <span class="k">Xưởng {site.name}</span>
+      <span class="addr">{site.address}</span>
+      <span class="open">Mở Google Maps <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg></span>
+    </span>
+  </a>
+  <figcaption>
+    <a class="dir" href={directionsLink} target="_blank" rel="noopener"><Icon name="pin" />Chỉ đường từ vị trí của bạn</a>
+  </figcaption>
+</figure>
+<style>
+  .map-card { margin: 0; container-type: inline-size; }
+  .frame { position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; text-decoration: none; color: var(--plaster); background: var(--limestone); border-radius: 999px 999px 0 0 / 40% 40% 0 0; box-shadow: 0 0 0 1px var(--rule), 0 0 0 6px var(--plaster), 0 0 0 7px rgba(165, 119, 15, 0.45), 0 18px 40px -18px rgba(16, 33, 25, 0.45); }
+  /* bản đồ không nhận chuột: bấm vào đâu cũng mở Google Maps */
+  .frame iframe { position: absolute; inset: -2px; width: calc(100% + 4px); height: calc(100% + 4px); border: 0; pointer-events: none; filter: saturate(0.45) sepia(0.18) hue-rotate(40deg) contrast(1.02); transition: filter 500ms var(--ease-out), transform 900ms var(--ease-out); }
+  .frame:hover iframe, .frame:focus-visible iframe { filter: none; transform: scale(1.03); }
+  .frame::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top, rgba(16, 33, 25, 0.92) 0%, rgba(16, 33, 25, 0.6) 26%, transparent 46%); }
+  .corner { position: absolute; top: 12%; right: 10%; z-index: 1; width: 3rem; height: 3rem; border-radius: 50%; display: grid; place-items: center; background: var(--plaster); box-shadow: 0 0 0 1px rgba(165, 119, 15, 0.7), 2px 3px 8px rgba(0, 0, 0, 0.3); }
+  .corner img { width: 72%; height: auto; }
+  .plate { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; display: grid; gap: 0.2rem; padding: 1rem 1.25rem 1.1rem; }
+  .k { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-bright); }
+  .addr { font-family: var(--font-display); font-variation-settings: 'wdth' 80; font-size: 1.15rem; line-height: 1.25; }
+  .open { display: inline-flex; align-items: center; gap: 0.35rem; margin-top: 0.45rem; font-size: var(--step--1); font-weight: 500; text-decoration: underline; text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+  .open svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.8; transition: transform 300ms var(--ease-out); }
+  .frame:hover .open svg { transform: translate(2px, -2px); }
+  .frame:focus-visible { outline: 2px solid var(--jade-600); outline-offset: 10px; }
+  figcaption { margin-top: 1rem; }
+  .dir { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 44px; color: var(--link, var(--jade-600)); font-weight: 500; }
+  .dir :global(.icon) { color: var(--jade-600); }
+  @media (prefers-reduced-motion: reduce) { .frame iframe, .open svg { transition: none; } .frame:hover iframe { transform: none; } }
+  /* cột hẹp: khung đứng để ghim ở giữa bản đồ không bị tấm địa chỉ che */
+  @container (max-width: 380px) {
+    .frame { aspect-ratio: 4 / 5; }
+    .addr { font-size: 1rem; }
+    .plate { padding: 0.9rem 1rem 1rem; }
+  }
+</style>

@@ -1,20 +1,34 @@
 {
   "name": "Điêu khắc Trần Sâm",
+  "company": "CÔNG TY TNHH TM DV MỸ THUẬT S - DECOR",
   "tagline": "Phù điêu, tượng và mô hình tạo hình theo yêu cầu",
-  "phone": "[CẦN ĐIỀN] 09xx xxx xxx",
-  "phoneHref": "",
+  "motto": "Chạm bằng tâm, khắc bằng tín",
+  "phone": "0941 825 519",
+  "phoneHref": "0941825519",
+  "phone2": "0973 841 766",
+  "phone2Href": "0973841766",
   "zalo": "",
-  "email": "[CẦN ĐIỀN] email@...",
-  "address": "[CẦN ĐIỀN] Địa chỉ xưởng",
+  "email": "transam610@gmail.com",
+  "address": "51/53/9 Đường số 10, Khu Phố 4, Phường Thủ Đức, TP. Hồ Chí Minh",
   "hours": "Thứ Hai – Thứ Bảy, 7:30 – 17:30",
+  "mapQuery": "51/53/9 Đường số 10, Khu Phố 4, Thủ Đức, Hồ Chí Minh",
   "mapEmbed": "",
   "facebook": "",
   "youtube": "",
   "tiktok": "",
   "founded": "",
   "stats": [
-    { "value": "", "label": "năm làm nghề" },
-    { "value": "", "label": "công trình đã bàn giao" },
-    { "value": "", "label": "m² nhà xưởng" }
+    {
+      "value": "",
+      "label": "năm làm nghề"
+    },
+    {
+      "value": "",
+      "label": "công trình đã bàn giao"
+    },
+    {
+      "value": "",
+      "label": "m² nhà xưởng"
+    }
   ]
 }

@@ -4,12 +4,12 @@ Website giới thiệu xưởng, làm bằng [Astro](https://astro.build) (trang
 
 ## Những việc cần làm trước khi đưa lên mạng
 
-1. **Điền thông tin liên hệ.** Sửa file `src/data/site.json`, hoặc vào `/admin` → *Thông tin xưởng*:
-   - `phone`: số hiển thị. `phoneHref`: số chỉ có chữ số, dùng cho nút bấm gọi.
+1. **Thông tin liên hệ** (đã điền: công ty S-Decor, 2 số điện thoại, email, địa chỉ). Sửa ở `src/data/site.json` hoặc `/admin` → *Thông tin xưởng*:
    - `zalo`: số Zalo. Để trống thì nút Zalo bị ẩn.
-   - `email`, `address`, `hours`, `mapEmbed` (đường dẫn nhúng Google Maps).
+   - `hours`: giờ làm việc, **cần kiểm tra lại** (đang là giờ mẫu).
+   - `mapQuery`: địa chỉ dùng cho bản đồ và nút *Chỉ đường*. Nếu ghim lệch, dán link nhúng vào `mapEmbed`.
    - `stats`: số năm làm nghề, số công trình… Để trống giá trị thì số liệu đó không hiện. Website không tự bịa số.
-2. **Viết câu chuyện xưởng** ở `src/pages/gioi-thieu.astro`, chỗ đoạn có chữ `[CẦN ĐIỀN]`.
+2. **Logo**: ảnh gốc ở `_raw/brand/s-decor-logo.webp` (không đưa lên Git). Đổi logo thì thay file này rồi chạy `node scripts/make-logo.mjs` để tạo lại biểu tượng và favicon.
 3. **Đổi tên miền** trong `astro.config.mjs` (`site`) và `public/admin/config.yml` (`site_url`, `display_url`).
 4. Repo GitHub: `khangtran02092003-spec/dieu-khac-tran-sam` (đã cấu hình trong `public/admin/config.yml`).
 5. Tìm toàn bộ chỗ còn thiếu:

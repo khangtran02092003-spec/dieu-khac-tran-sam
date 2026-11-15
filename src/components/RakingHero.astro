@@ -110,9 +110,12 @@ const common = { src: r.src, srcset: r.srcset, sizes: '100vw', width: r.width, h
   </div>
 
   <div class="wrap content">
-    <h1 id="hero-title">Mỗi bức phù điêu bắt đầu từ bức tường của bạn</h1>
+    <h1 id="hero-title" class="slogan">
+      <span class="ln ln-1"><em>Chuyên nghiệp</em> <span class="rest">trong từng chi tiết</span></span><span class="sr-only"> – </span>
+      <span class="ln ln-2"><span class="rule" aria-hidden="true"></span><em>Tận tâm</em> <span class="rest">trong từng sản phẩm</span></span>
+    </h1>
     <div class="foot">
-      <p class="lede">Điêu khắc Trần Sâm nặn mẫu đất sét theo đúng không gian của bạn, để bạn duyệt từng chi tiết trước khi đúc composite, đắp xi măng hay hoàn thiện giả đồng.</p>
+      <p class="lede">Từ bản vẽ 2D, 3D, mẫu in 3D hay CNC, đến khuôn thạch cao, đúc composite và sơn vẽ hoàn thiện: Điêu khắc Trần Sâm làm trọn từng công đoạn, và bạn duyệt phương án trước khi xưởng sản xuất.</p>
       <div class="ctas">
         <a class="btn btn-primary" href="/lien-he/">Gửi ý tưởng, nhận báo giá</a>
         <a class="btn btn-ghost" href="/tac-pham/">Xem tác phẩm</a>
@@ -143,7 +146,13 @@ const common = { src: r.src, srcset: r.srcset, sizes: '100vw', width: r.width, h
   .veil { position: absolute; inset: 0; background: linear-gradient(to top, rgba(16, 33, 25, 0.96) 0%, rgba(16, 33, 25, 0.55) 38%, rgba(16, 33, 25, 0.1) 70%), linear-gradient(to right, rgba(16, 33, 25, 0.5), transparent 55%); }
 
   .content { padding-top: 8rem; padding-bottom: clamp(2.5rem, 2rem + 4vw, 5rem); position: relative; }
-  h1 { max-width: 14ch; font-variation-settings: 'wdth' 68; font-weight: 450; }
+  /* Khẩu hiệu: hai chữ chốt (Chuyên nghiệp / Tận tâm) khắc lớn màu đồng vàng, phần còn lại nhỏ và nhẹ; dòng hai thụt vào như bậc phù điêu */
+  .slogan { font-size: inherit; line-height: 1; max-width: none; display: grid; gap: clamp(0.4rem, 0.2rem + 0.8vw, 1rem); }
+  .ln { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 0.45em; }
+  .slogan em { font-style: italic; font-variation-settings: 'wdth' 68; font-weight: 500; font-size: clamp(3rem, 1.5rem + 5.4vw, 7.25rem); line-height: 0.95; letter-spacing: -0.015em; color: var(--gold-bright); text-shadow: 0 1px 0 rgba(255, 236, 190, 0.25), 0 -1px 0 rgba(0, 0, 0, 0.45), 0 8px 30px rgba(0, 0, 0, 0.35); }
+  .slogan .rest { font-variation-settings: 'wdth' 80; font-weight: 350; font-size: clamp(1.5rem, 1rem + 1.9vw, 3rem); line-height: 1.1; color: var(--plaster); }
+  .ln-2 { padding-left: clamp(0rem, -2rem + 10vw, 9rem); }
+  .rule { align-self: center; width: clamp(1.5rem, 0.5rem + 3vw, 4rem); height: 1px; background: var(--gold-bright); opacity: 0.8; margin-right: 0.1em; }
   .foot { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 2rem 3rem; margin-top: clamp(1.5rem, 1rem + 2vw, 3rem); }
   .lede { color: #cddbd2; margin: 0; max-width: 46ch; }
   .ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; }

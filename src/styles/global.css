@@ -18,6 +18,9 @@
   --verdigris-100: #dbe9e0;
   --plaster: #fbfaf6;
   --limestone: #efe8d8;
+  /* vàng đồng lấy từ tượng trong logo S-Decor; bản tối dùng trên nền sáng để đủ tương phản */
+  --gold: #a5770f;
+  --gold-bright: #ddb03a;
   --limestone-deep: #e3d9c3;
   --ink: #15211b;
   --ink-soft: #4a5a51;
@@ -115,7 +118,7 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .section { padding-block: var(--section); }
 .grid12 { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
 
-.on-dark { background: var(--grain-dark), var(--moss-950); color: var(--plaster); --fg-soft: #b9c9bf; --link: var(--verdigris-300); --rule: var(--rule-dark); }
+.on-dark { background: var(--grain-dark), var(--moss-950); color: var(--plaster); --gold: var(--gold-bright); --fg-soft: #b9c9bf; --link: var(--verdigris-300); --rule: var(--rule-dark); }
 .on-cream { background: var(--grain-light), var(--limestone); }
 
 /* Khám vòm: khung ảnh đầu tròn như hốc phù điêu, cùng ngôn ngữ với logo */
